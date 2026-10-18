@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+/*
+ * FLEECE HEARTS — design tokens
+ * Lihat docs/Fleece_Hearts_Design_Direction_and_Work_Plan.md §2
+ *
+ * Aturan warna:
+ * - Kuning (#FFC200) = background/aksen. JANGAN jadi warna teks di atas putih (kontras ~1.6:1).
+ * - Teks di atas kuning selalu pakai ink (kontras ~12:1).
+ * - Maksimal satu blok kuning per layar.
+ */
+
+/*
+ * Coolvetica — taruh file di apps/web/public/fonts/ setelah lisensi web dikonfirmasi.
+ * Kalau file belum ada, heading otomatis fallback ke Helvetica Neue / Arial.
+ */
+@font-face {
+  font-family: "Coolvetica";
+  src: url("/fonts/coolvetica-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --color-brand: #ffc200;
+  --color-brand-press: #e6ae00;
+  --color-ink: #121212;
+  --color-paper: #ffffff;
+  --color-mist: #f2f2f0;
+  --color-stone: #6b6b6b;
+  --color-line: #e4e4e2;
+  --color-danger: #b42318;
+
+  --font-display: "Coolvetica", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* Skala tipe (rasio ~1.333, dibulatkan) */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.5rem;
+  --text-3xl: 4rem;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: var(--color-brand);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 0.92;
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
