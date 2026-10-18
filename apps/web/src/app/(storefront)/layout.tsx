@@ -1,17 +1,17 @@
 import { connection } from "next/server";
 import type { ReactNode } from "react";
+import { CartDrawer } from "@/components/cart/cart-drawer";
 import { AnnouncementBar } from "@/components/layout/announcement-bar";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { formatReleaseWIB } from "@/lib/datetime";
-import { services } from "@/services";
+import { getDropContext } from "@/lib/drop-context";
 
 const isMock = (process.env.NEXT_PUBLIC_DATA_SOURCE ?? "mock") === "mock";
 
 export default async function StorefrontLayout({ children }: { children: ReactNode }) {
   await connection();
-  const { drops } = await services.drops.listDrops();
-  const next = drops.find((d) => d.status === "UPCOMING" || d.status === "LIVE");
+  const { featured: next } = await getDropContext();
   const announcement = next
     ? next.status === "LIVE"
       ? `${next.code} sudah rilis. Belanja sekarang.`
@@ -30,6 +30,7 @@ export default async function StorefrontLayout({ children }: { children: ReactNo
       <SiteHeader />
       <main id="konten">{children}</main>
       <SiteFooter />
+      <CartDrawer />
       {isMock && (
         <p className="bg-mist px-4 py-2 text-center text-xs text-stone">
           Mode demo: produk, harga, stok, pembayaran, dan pengiriman masih data contoh.

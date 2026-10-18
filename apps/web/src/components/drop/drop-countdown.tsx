@@ -1,6 +1,7 @@
 "use client";
 
 import { getCountdownParts } from "@fh/shared";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface DropCountdownProps {
@@ -28,6 +29,12 @@ export function DropCountdown({ releaseAt, serverNow }: DropCountdownProps) {
   }, [serverNow]);
 
   const { days, hours, minutes, seconds, done } = getCountdownParts(target, now);
+  const router = useRouter();
+
+  // Begitu waktu rilis lewat, muat ulang data server supaya tombol beli terbuka.
+  useEffect(() => {
+    if (done) router.refresh();
+  }, [done, router]);
 
   if (done) {
     return <p className="font-display text-[clamp(3rem,12vw,9rem)]">Sudah rilis</p>;

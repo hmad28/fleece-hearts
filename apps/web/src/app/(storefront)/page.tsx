@@ -1,25 +1,22 @@
 import Link from "next/link";
 import { connection } from "next/server";
 import { DropCountdown } from "@/components/drop/drop-countdown";
-import { ProductCard } from "@/components/product/product-card";
+import { ProductGrid } from "@/components/product/product-grid";
 import { ButtonLink } from "@/components/ui/button";
 import { Media } from "@/components/ui/media";
 import { formatReleaseWIB } from "@/lib/datetime";
+import { getDropContext } from "@/lib/drop-context";
 import { services } from "@/services";
 
 export default async function HomePage() {
   // Countdown & status drop bergantung jam server → render per request.
   await connection();
 
-  const [{ drops, serverNow }, latest, categories] = await Promise.all([
-    services.drops.listDrops(),
+  const [{ serverNow, featured: featuredDrop, lockedByProduct }, latest, categories] = await Promise.all([
+    getDropContext(),
     services.catalog.listProducts({ sort: "newest", perPage: 8 }),
     services.catalog.listCategories(),
   ]);
-
-  const featuredDrop = drops.find((d) => d.status === "UPCOMING" || d.status === "LIVE");
-  const upcomingIds = new Set(drops.filter((d) => d.status === "UPCOMING").flatMap((d) => d.productIds));
-  const codeById = new Map(drops.flatMap((d) => d.productIds.map((id) => [id, d.code] as const)));
 
   return (
     <>
@@ -73,17 +70,9 @@ export default async function HomePage() {
             Lihat semua produk
           </Link>
         </div>
-        <ul className="mt-8 grid grid-cols-2 gap-x-3 gap-y-10 md:mt-12 md:gap-x-6 lg:grid-cols-4">
-          {latest.items.map((p, i) => (
-            <li key={p.id}>
-              <ProductCard
-                product={p}
-                priority={i < 2}
-                upcomingDropCode={upcomingIds.has(p.id) ? codeById.get(p.id) : undefined}
-              />
-            </li>
-          ))}
-        </ul>
+        <div className="mt-8 md:mt-12">
+          <ProductGrid products={latest.items} lockedByProduct={lockedByProduct} />
+        </div>
       </section>
 
       <section aria-labelledby="category-heading" className="mx-auto max-w-[90rem] px-4 pt-24 md:px-8 md:pt-32">
