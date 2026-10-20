@@ -1,26 +1,43 @@
 /**
- * ⚠️ DATA CONTOH — BUKAN DATA KLIEN.
- * Semua nama, harga, deskripsi, dan stok di sini dummy (isDummy: true).
+ * ⚠️ DATA DUMMY — BUKAN DATA KLIEN.
+ * Nama, harga, deskripsi, bahan, stok, dan gambar di sini dibuat untuk demo (isDummy: true).
+ * Gambar = ilustrasi SVG dari scripts/generate-mock-art.mjs, bukan foto produk.
  * Ganti dengan data asli Fleece Hearts saat sudah dikirim klien.
  */
 import type { Category, Collection, Product, ProductVariant, SizeGuide } from "@fh/types";
 
 export const categories: Category[] = [
-  { id: "cat_hoodie", name: "Hoodie", slug: "hoodie", isDummy: true },
+  { id: "cat_hoodie", name: "Hoodie & Zip", slug: "hoodie", isDummy: true },
   { id: "cat_crewneck", name: "Crewneck", slug: "crewneck", isDummy: true },
   { id: "cat_tee", name: "T-shirt", slug: "t-shirt", isDummy: true },
   { id: "cat_pants", name: "Pants", slug: "pants", isDummy: true },
-  { id: "cat_acc", name: "Aksesoris", slug: "aksesoris", isDummy: true },
+  { id: "cat_head", name: "Headwear", slug: "headwear", isDummy: true },
+  { id: "cat_bag", name: "Bags", slug: "bags", isDummy: true },
 ];
 
 export const collections: Collection[] = [
-  { id: "col_core", name: "Core", slug: "core", description: "Koleksi contoh.", isDummy: true },
+  { id: "col_core", name: "Core", slug: "core", description: "Basic harian yang selalu tersedia.", isDummy: true },
+  { id: "col_ch01", name: "CH01 Warm Up", slug: "ch01-warm-up", description: "Rilis pertama: polar fleece.", isDummy: true },
 ];
 
 export const sizeGuides: SizeGuide[] = [
   {
     id: "sg_top",
-    name: "Atasan (contoh)",
+    name: "Hoodie, zip & crewneck",
+    unit: "cm",
+    columns: ["Lebar dada", "Panjang badan", "Panjang lengan"],
+    rows: [
+      { size: "S", values: [56, 66, 58] },
+      { size: "M", values: [59, 69, 60] },
+      { size: "L", values: [62, 72, 62] },
+      { size: "XL", values: [65, 75, 64] },
+    ],
+    note: "Potongan boxy. Kalau ragu di antara dua ukuran, ambil yang lebih kecil.",
+    isDummy: true,
+  },
+  {
+    id: "sg_tee",
+    name: "T-shirt",
     unit: "cm",
     columns: ["Lebar dada", "Panjang badan"],
     rows: [
@@ -29,7 +46,20 @@ export const sizeGuides: SizeGuide[] = [
       { size: "L", values: [58, 74] },
       { size: "XL", values: [61, 77] },
     ],
-    note: "Ukuran contoh. Tunggu size chart asli dari klien.",
+    note: "Diukur dalam posisi kaos rata di meja.",
+    isDummy: true,
+  },
+  {
+    id: "sg_pants",
+    name: "Pants",
+    unit: "cm",
+    columns: ["Lingkar pinggang (karet)", "Panjang", "Lebar paha"],
+    rows: [
+      { size: "S", values: ["66–84", 98, 31] },
+      { size: "M", values: ["70–88", 100, 32] },
+      { size: "L", values: ["74–92", 102, 33] },
+      { size: "XL", values: ["78–96", 104, 34] },
+    ],
     isDummy: true,
   },
 ];
@@ -45,9 +75,9 @@ function variants(
   sizes: readonly string[] = SIZES,
 ): ProductVariant[] {
   return sizes.map((size, i) => ({
-    id: `${productId}_${size.toLowerCase()}`,
+    id: `${productId}_${size.toLowerCase().replace(/\s+/g, "")}`,
     productId,
-    sku: `${skuBase}-${size}`,
+    sku: `${skuBase}-${size.replace(/\s+/g, "").toUpperCase()}`,
     size,
     color,
     colorHex,
@@ -56,42 +86,135 @@ function variants(
   }));
 }
 
-function images(productId: string, name: string, count = 3) {
-  return Array.from({ length: count }, (_, i) => ({
-    id: `${productId}_img${i + 1}`,
-    url: null, // foto asli belum ada
-    alt: `${name} — foto ${i + 1}`,
+const VIEW_LABELS = ["tampak depan", "tampak belakang", "detail"];
+
+function images(slug: string, name: string) {
+  return VIEW_LABELS.map((label, i) => ({
+    id: `${slug}_img${i + 1}`,
+    url: `/mock/products/${slug}-${i + 1}.svg`,
+    alt: `${name}, ${label} (ilustrasi)`,
     position: i,
+    width: 800,
+    height: 1000,
   }));
 }
 
 type Seed = {
   id: string;
   slug: string;
+  sku: string;
   name: string;
   colorway: string;
   colorHex: string;
   price: number;
   compareAtPrice?: number;
   categoryId: string;
+  collectionIds?: string[];
+  description: string;
+  material: string;
+  care?: string[];
   stock: readonly number[];
   sizes?: readonly string[];
+  sizeGuideId?: string;
   dropId?: string;
   featured?: boolean;
   weightGram: number;
   createdAt: string;
 };
 
+const CARE_FLEECE = [
+  "Cuci dengan air dingin, bagian dalam di luar",
+  "Jangan pakai pemutih",
+  "Jemur di tempat teduh, jangan diperas kuat",
+  "Setrika suhu rendah, hindari area sablon",
+];
+const CARE_TEE = ["Cuci dengan air dingin", "Jangan pakai pemutih", "Setrika bagian dalam, suhu sedang"];
+
 const seeds: Seed[] = [
-  { id: "p_001", slug: "contoh-hoodie-hitam", name: "Contoh Hoodie", colorway: "Hitam", colorHex: "#121212", price: 389000, categoryId: "cat_hoodie", stock: [4, 10, 8, 2], featured: true, weightGram: 650, createdAt: "2026-10-01T03:00:00.000Z" },
-  { id: "p_002", slug: "contoh-hoodie-abu", name: "Contoh Hoodie", colorway: "Abu", colorHex: "#9A9A96", price: 389000, categoryId: "cat_hoodie", stock: [0, 3, 1, 0], weightGram: 650, createdAt: "2026-10-01T03:00:00.000Z" },
-  { id: "p_003", slug: "contoh-crewneck-krem", name: "Contoh Crewneck", colorway: "Krem", colorHex: "#E9E1CF", price: 329000, compareAtPrice: 379000, categoryId: "cat_crewneck", stock: [6, 6, 6, 6], featured: true, weightGram: 520, createdAt: "2026-10-05T03:00:00.000Z" },
-  { id: "p_004", slug: "contoh-tee-putih", name: "Contoh Tee", colorway: "Putih", colorHex: "#FFFFFF", price: 179000, categoryId: "cat_tee", stock: [12, 20, 15, 9], weightGram: 220, createdAt: "2026-10-08T03:00:00.000Z" },
-  { id: "p_005", slug: "contoh-tee-kuning", name: "Contoh Tee", colorway: "Kuning", colorHex: "#FFC200", price: 179000, categoryId: "cat_tee", stock: [0, 0, 0, 0], weightGram: 220, createdAt: "2026-10-08T03:00:00.000Z" },
-  { id: "p_006", slug: "contoh-sweatpants-hitam", name: "Contoh Sweatpants", colorway: "Hitam", colorHex: "#121212", price: 299000, categoryId: "cat_pants", stock: [5, 7, 7, 3], weightGram: 480, createdAt: "2026-10-10T03:00:00.000Z" },
-  { id: "p_007", slug: "contoh-fleece-zip-kuning", name: "Contoh Fleece Zip", colorway: "Kuning", colorHex: "#FFC200", price: 459000, categoryId: "cat_hoodie", stock: [5, 8, 8, 4], dropId: "drop_ch01", featured: true, weightGram: 700, createdAt: "2026-10-15T03:00:00.000Z" },
-  { id: "p_008", slug: "contoh-fleece-zip-hitam", name: "Contoh Fleece Zip", colorway: "Hitam", colorHex: "#121212", price: 459000, categoryId: "cat_hoodie", stock: [5, 8, 8, 4], dropId: "drop_ch01", weightGram: 700, createdAt: "2026-10-15T03:00:00.000Z" },
-  { id: "p_009", slug: "contoh-cap-hitam", name: "Contoh Cap", colorway: "Hitam", colorHex: "#121212", price: 149000, categoryId: "cat_acc", stock: [20], sizes: ["All size"], dropId: "drop_ch01", weightGram: 150, createdAt: "2026-10-15T03:00:00.000Z" },
+  {
+    id: "p_001", slug: "everyday-hoodie-black", sku: "FH-HD01-BLK", name: "Everyday Hoodie", colorway: "Black", colorHex: "#1C1C1C",
+    price: 389000, categoryId: "cat_hoodie", sizeGuideId: "sg_top", featured: true, weightGram: 680, createdAt: "2026-09-20T03:00:00.000Z",
+    description: "Hoodie harian dengan potongan boxy dan bahu turun. Hood dua lapis, saku kanguru, dan logo mark bordir kecil di dada.",
+    material: "Cotton fleece 330 gsm (80% katun, 20% poliester), bagian dalam brushed lembut.",
+    stock: [6, 14, 11, 4],
+  },
+  {
+    id: "p_002", slug: "everyday-hoodie-oat", sku: "FH-HD01-OAT", name: "Everyday Hoodie", colorway: "Oat", colorHex: "#E9DFCC",
+    price: 389000, categoryId: "cat_hoodie", sizeGuideId: "sg_top", weightGram: 680, createdAt: "2026-09-20T03:00:00.000Z",
+    description: "Hoodie harian dengan potongan boxy dan bahu turun. Hood dua lapis, saku kanguru, dan logo mark bordir kecil di dada.",
+    material: "Cotton fleece 330 gsm (80% katun, 20% poliester), bagian dalam brushed lembut.",
+    stock: [0, 3, 2, 1],
+  },
+  {
+    id: "p_003", slug: "heart-crewneck-forest", sku: "FH-CR01-FOR", name: "Heart Crewneck", colorway: "Forest", colorHex: "#34493B",
+    price: 299000, compareAtPrice: 349000, categoryId: "cat_crewneck", sizeGuideId: "sg_top", featured: true, weightGram: 560, createdAt: "2026-09-28T03:00:00.000Z",
+    description: "Crewneck dengan logo mark sablon puff besar di dada. Rib tebal di leher, manset, dan bawah supaya bentuknya tetap rapi.",
+    material: "Cotton fleece 300 gsm (80% katun, 20% poliester).",
+    stock: [5, 9, 9, 6],
+  },
+  {
+    id: "p_004", slug: "monogram-tee-white", sku: "FH-TS01-WHT", name: "Monogram Tee", colorway: "White", colorHex: "#FBFAF6",
+    price: 179000, categoryId: "cat_tee", sizeGuideId: "sg_tee", weightGram: 230, createdAt: "2026-10-02T03:00:00.000Z",
+    description: "Kaos heavyweight dengan leher rib rapat. Logo mark kecil di dada, versi besar di punggung.",
+    material: "Katun combed 24s, 220 gsm.", care: CARE_TEE,
+    stock: [18, 25, 20, 12],
+  },
+  {
+    id: "p_005", slug: "monogram-tee-black", sku: "FH-TS01-BLK", name: "Monogram Tee", colorway: "Black", colorHex: "#181818",
+    price: 179000, categoryId: "cat_tee", sizeGuideId: "sg_tee", weightGram: 230, createdAt: "2026-10-02T03:00:00.000Z",
+    description: "Kaos heavyweight dengan leher rib rapat. Logo mark kecil di dada, versi besar di punggung.",
+    material: "Katun combed 24s, 220 gsm.", care: CARE_TEE,
+    stock: [10, 16, 14, 2],
+  },
+  {
+    id: "p_006", slug: "polar-fleece-zip-butter", sku: "FH-ZP01-BTR", name: "Polar Fleece Zip", colorway: "Butter", colorHex: "#FFC200",
+    price: 459000, categoryId: "cat_hoodie", collectionIds: ["col_ch01"], sizeGuideId: "sg_top", dropId: "drop_ch01", featured: true, weightGram: 720, createdAt: "2026-10-15T03:00:00.000Z",
+    description: "Jaket polar fleece dengan kerah berdiri dan resleting penuh. Saku dada dengan penutup, logo mark bordir di dada kiri.",
+    material: "Polar fleece anti-pilling 320 gsm (100% poliester daur ulang).",
+    stock: [8, 12, 12, 6],
+  },
+  {
+    id: "p_007", slug: "polar-fleece-zip-black", sku: "FH-ZP01-BLK", name: "Polar Fleece Zip", colorway: "Black", colorHex: "#1C1C1C",
+    price: 459000, categoryId: "cat_hoodie", collectionIds: ["col_ch01"], sizeGuideId: "sg_top", dropId: "drop_ch01", weightGram: 720, createdAt: "2026-10-15T03:00:00.000Z",
+    description: "Jaket polar fleece dengan kerah berdiri dan resleting penuh. Saku dada dengan penutup, logo mark bordir kuning di dada kiri.",
+    material: "Polar fleece anti-pilling 320 gsm (100% poliester daur ulang).",
+    stock: [8, 12, 12, 6],
+  },
+  {
+    id: "p_008", slug: "lounge-sweatpants-charcoal", sku: "FH-PT01-CHR", name: "Lounge Sweatpants", colorway: "Charcoal", colorHex: "#3B3B3E",
+    price: 319000, categoryId: "cat_pants", sizeGuideId: "sg_pants", featured: true, weightGram: 520, createdAt: "2026-09-25T03:00:00.000Z",
+    description: "Celana jogger dengan potongan lurus, pinggang karet dan tali serut. Dua saku samping dan satu saku belakang.",
+    material: "Cotton fleece 300 gsm (80% katun, 20% poliester).",
+    stock: [7, 10, 8, 3],
+  },
+  {
+    id: "p_009", slug: "lounge-sweatpants-oat", sku: "FH-PT01-OAT", name: "Lounge Sweatpants", colorway: "Oat", colorHex: "#E9DFCC",
+    price: 319000, categoryId: "cat_pants", sizeGuideId: "sg_pants", weightGram: 520, createdAt: "2026-09-25T03:00:00.000Z",
+    description: "Celana jogger dengan potongan lurus, pinggang karet dan tali serut. Dua saku samping dan satu saku belakang.",
+    material: "Cotton fleece 300 gsm (80% katun, 20% poliester).",
+    stock: [4, 6, 5, 2],
+  },
+  {
+    id: "p_010", slug: "mark-cap-black", sku: "FH-CP01-BLK", name: "Mark Cap", colorway: "Black", colorHex: "#161616",
+    price: 149000, categoryId: "cat_head", collectionIds: ["col_ch01"], dropId: "drop_ch01", weightGram: 120, createdAt: "2026-10-15T03:00:00.000Z",
+    description: "Topi 6 panel dengan logo mark bordir timbul di depan. Strap kulit sintetis di belakang, bisa diatur.",
+    material: "Katun twill 100%.", care: ["Cuci tangan dengan air dingin", "Jangan dimasukkan mesin pengering"],
+    stock: [30], sizes: ["All size"],
+  },
+  {
+    id: "p_011", slug: "rib-beanie-butter", sku: "FH-BN01-BTR", name: "Rib Beanie", colorway: "Butter", colorHex: "#FFC200",
+    price: 129000, categoryId: "cat_head", weightGram: 90, createdAt: "2026-09-18T03:00:00.000Z",
+    description: "Beanie rajut rib dengan lipatan lebar dan label tenun logo mark.",
+    material: "Akrilik lembut 100%.", care: ["Cuci tangan dengan air dingin", "Keringkan mendatar"],
+    stock: [0], sizes: ["All size"],
+  },
+  {
+    id: "p_012", slug: "canvas-tote-natural", sku: "FH-TB01-NAT", name: "Canvas Tote", colorway: "Natural", colorHex: "#EDE3D0",
+    price: 119000, categoryId: "cat_bag", weightGram: 260, createdAt: "2026-09-10T03:00:00.000Z",
+    description: "Tote kanvas tebal yang muat laptop 14 inci. Logo mark sablon besar di depan, tali panjang untuk dipakai di bahu.",
+    material: "Kanvas katun 12 oz.", care: ["Cuci tangan dengan air dingin", "Jangan diperas"],
+    stock: [22], sizes: ["One size"],
+  },
 ];
 
 export const products: Product[] = seeds.map((s) => {
@@ -101,20 +224,20 @@ export const products: Product[] = seeds.map((s) => {
     slug: s.slug,
     name: s.name,
     colorway: s.colorway,
-    description: "Deskripsi contoh. Menunggu deskripsi produk asli dari klien.",
-    material: "Bahan contoh",
-    careInstructions: ["Instruksi perawatan contoh"],
+    description: s.description,
+    material: s.material,
+    careInstructions: s.care ?? CARE_FLEECE,
     price: s.price,
     compareAtPrice: s.compareAtPrice,
     categoryId: s.categoryId,
-    collectionIds: ["col_core"],
+    collectionIds: s.collectionIds ?? ["col_core"],
     dropId: s.dropId,
-    images: images(s.id, fullName),
-    variants: variants(s.id, s.id.toUpperCase().replace("_", ""), s.colorway, s.colorHex, s.stock, s.sizes),
+    images: images(s.slug, fullName),
+    variants: variants(s.id, s.sku, s.colorway, s.colorHex, s.stock, s.sizes),
     weightGram: s.weightGram,
     status: "ACTIVE",
     isFeatured: Boolean(s.featured),
-    sizeGuideId: s.categoryId === "cat_acc" ? undefined : "sg_top",
+    sizeGuideId: s.sizeGuideId,
     createdAt: s.createdAt,
     isDummy: true,
   };

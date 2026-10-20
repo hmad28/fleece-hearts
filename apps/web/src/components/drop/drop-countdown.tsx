@@ -53,7 +53,7 @@ export function DropCountdown({ releaseAt, serverNow }: DropCountdownProps) {
         {units.map((u) => (
           <div key={u.label} className="flex flex-col-reverse">
             <dt className="mt-2 text-sm sm:text-base">{u.label}</dt>
-            <dd className="font-display tabular text-[clamp(3.25rem,15vw,11rem)]" aria-hidden>
+            <dd className="font-display tabular text-[clamp(3rem,13vw,7rem)]" aria-hidden>
               {pad(u.value)}
             </dd>
           </div>

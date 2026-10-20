@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { DropCountdown } from "@/components/drop/drop-countdown";
 import { DropStatusLabel } from "@/components/drop/drop-status-label";
 import { ProductGrid } from "@/components/product/product-grid";
+import { Media } from "@/components/ui/media";
 import { formatReleaseWIB } from "@/lib/datetime";
 import { getDropContext } from "@/lib/drop-context";
 import { services } from "@/services";
@@ -27,19 +28,23 @@ export default async function DropPage({ params }: { params: Params }) {
   return (
     <>
       <section className={upcoming ? "bg-brand text-ink" : "bg-ink text-paper"}>
-        <div className="mx-auto max-w-[90rem] px-4 py-12 md:px-8 md:py-20">
-          <div className="flex items-center gap-3">
-            <DropStatusLabel status={drop.status} />
-            <p className="text-sm">{formatReleaseWIB(drop.releaseAt)}</p>
-          </div>
-          <h1 className="font-display mt-6 text-[clamp(5rem,20vw,16rem)]">{drop.code}</h1>
-          <p className="mt-4 text-xl md:text-2xl">{drop.name}</p>
-          {drop.tagline && <p className="mt-2 max-w-xl opacity-70">{drop.tagline}</p>}
-          {upcoming && (
-            <div className="mt-12">
-              <DropCountdown releaseAt={drop.releaseAt} serverNow={serverNow} />
+        <div className="mx-auto grid max-w-[90rem] items-center gap-10 px-4 py-12 md:grid-cols-[1fr_1fr] md:px-8 md:py-20">
+          <div>
+            <div className="flex items-center gap-3">
+              <DropStatusLabel status={drop.status} />
+              <p className="text-sm">{formatReleaseWIB(drop.releaseAt)}</p>
             </div>
-          )}
+            <h1 className="font-display mt-6 text-[clamp(5rem,16vw,13rem)]">{drop.code}</h1>
+            <p className="mt-4 text-xl md:text-2xl">{drop.name}</p>
+            {drop.tagline && <p className="mt-2 max-w-xl opacity-70">{drop.tagline}</p>}
+            {upcoming && (
+              <div className="mt-12">
+                <DropCountdown releaseAt={drop.releaseAt} serverNow={serverNow} />
+              </div>
+            )}
+            {drop.description && <p className="mt-10 max-w-lg leading-relaxed">{drop.description}</p>}
+          </div>
+          <Media asset={drop.banner} priority sizes="(min-width: 768px) 45vw, 92vw" className="aspect-[16/10] w-full" />
         </div>
       </section>
 

@@ -23,17 +23,20 @@
 }
 
 @theme {
+  /* Diambil dari logo: hitam pekat di atas pasir. Kuning = aksen drop. */
   --color-brand: #ffc200;
   --color-brand-press: #e6ae00;
-  --color-ink: #121212;
-  --color-paper: #ffffff;
-  --color-mist: #f2f2f0;
-  --color-stone: #6b6b6b;
-  --color-line: #e4e4e2;
+  --color-ink: #000000;
+  --color-paper: #f7f2ea;
+  --color-sand: #e2d3be;
+  --color-sand-deep: #d3bfa3;
+  --color-mist: #efe6d8;
+  --color-stone: #6e6457;
+  --color-line: #ddd0be;
   --color-danger: #b42318;
 
-  --font-display: "Coolvetica", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: "Coolvetica", "Inter Tight Variable", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-sans: "Helvetica Neue", "Inter Tight Variable", Helvetica, Arial, sans-serif;
 
   /* Skala tipe (rasio ~1.333, dibulatkan) */
   --text-xs: 0.75rem;
@@ -72,6 +75,11 @@
     outline-offset: 3px;
   }
 
+  @keyframes fh-draw {
+    from { stroke-dashoffset: 1; }
+    to { stroke-dashoffset: 0; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -86,9 +94,11 @@
 
 @utility font-display {
   font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  line-height: 0.92;
+  /* 600 hanya berlaku untuk fallback Inter Tight; Coolvetica cuma punya 1 bobot. */
+  font-weight: 600;
+  font-synthesis: none;
+  letter-spacing: -0.035em;
+  line-height: 0.9;
 }
 
 @utility tabular {

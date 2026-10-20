@@ -52,7 +52,7 @@ pnpm build                 # build semua
 
 | Aset | Taruh di | Catatan |
 |---|---|---|
-| Logo | `apps/web/public/brand/` | Ganti `components/brand/wordmark.tsx` |
+| Logo | `apps/web/public/brand/logo-mark.svg` | ✅ Sudah divektorkan dari logo klien (`logo-source.jpg`) |
 | Font Coolvetica | `apps/web/public/fonts/coolvetica-regular.woff2` | Konfirmasi lisensi web dulu |
-| Foto produk/banner | sementara isi `url` di mock data; nanti Cloudflare R2 | Placeholder otomatis tampil kalau `url: null` |
+| Foto produk/banner | sementara ilustrasi SVG di `apps/web/public/mock/` (dari `scripts/generate-mock-art.mjs`); nanti Cloudflare R2 | Ganti `url` di mock data, lalu hapus `public/mock` |
 | Kontak & sosmed | `apps/web/src/config/site.ts` | Nilai `null` = belum ada |

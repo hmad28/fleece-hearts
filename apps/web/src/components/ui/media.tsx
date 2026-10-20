@@ -22,7 +22,16 @@ export function Media({ asset, className, sizes = "100vw", priority, placeholder
   if (asset.url) {
     return (
       <div className={cn("relative overflow-hidden bg-mist", className)}>
-        <Image src={asset.url} alt={asset.alt} fill sizes={sizes} priority={priority} className="object-cover" />
+        <Image
+          src={asset.url}
+          alt={asset.alt}
+          fill
+          sizes={sizes}
+          priority={priority}
+          // Ilustrasi dummy berupa SVG: tidak perlu dioptimasi.
+          unoptimized={asset.url.endsWith(".svg")}
+          className="object-cover"
+        />
       </div>
     );
   }

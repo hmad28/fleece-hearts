@@ -1,5 +1,5 @@
 /**
- * ⚠️ DATA CONTOH — nama drop & jadwal rilis belum dari klien.
+ * ⚠️ DATA DUMMY — nama drop, cerita, & jadwal rilis belum dari klien.
  */
 import type { Drop } from "@fh/types";
 
@@ -20,11 +20,13 @@ export function getMockDrops(now: Date): Drop[] {
       id: "drop_ch01",
       slug: "ch01",
       code: "CH01",
-      name: "Drop contoh",
-      tagline: "Nama dan cerita drop menyusul dari klien.",
-      banner: { id: "drop_ch01_banner", url: null, alt: "Banner drop CH01" },
+      name: "Warm Up",
+      tagline: "Polar fleece pertama kami, dalam dua warna.",
+      description:
+        "Chapter pertama Fleece Hearts: jaket polar fleece berkerah tinggi dalam warna Butter dan Black, plus Mark Cap. Stok terbatas, tidak ada restock untuk warna ini.",
+      banner: { id: "drop_ch01_banner", url: "/mock/campaign/ch01-wide.svg", alt: "Ilustrasi campaign CH01 Warm Up: dua jaket polar fleece dan topi", width: 3200, height: 2000 },
       releaseAt: nextReleaseAt(now),
-      productIds: ["p_007", "p_008", "p_009"],
+      productIds: ["p_006", "p_007", "p_010"],
       isDummy: true,
     },
   ];
