@@ -6,17 +6,18 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { formatReleaseWIB } from "@/lib/datetime";
 import { getDropContext } from "@/lib/drop-context";
+import { getSiteContent } from "@/lib/site-content";
 
 const isMock = (process.env.NEXT_PUBLIC_DATA_SOURCE ?? "mock") === "mock";
 
 export default async function StorefrontLayout({ children }: { children: ReactNode }) {
   await connection();
-  const { featured: next } = await getDropContext();
-  const announcement = next
+  const [{ featured: next }, content] = await Promise.all([getDropContext(), getSiteContent()]);
+  const announcement = content.announcement || (next
     ? next.status === "LIVE"
       ? `${next.code} sudah rilis. Belanja sekarang.`
       : `${next.code} rilis ${formatReleaseWIB(next.releaseAt)}`
-    : null;
+    : null);
 
   return (
     <>

@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { ProductGrid } from "@/components/product/product-grid";
 import { getDropContext } from "@/lib/drop-context";
 import { cn } from "@/lib/utils";
-import { services } from "@/services";
+import { dbCatalog } from "@/lib/storefront-data";
 
 export const metadata: Metadata = { title: "Shop" };
 
@@ -31,9 +31,9 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   const sort = SORTS.some((s) => s.value === sortParam) ? (sortParam as ProductListQuery["sort"]) : "newest";
 
   const [categories, all, result, { lockedByProduct }] = await Promise.all([
-    services.catalog.listCategories(),
-    services.catalog.listProducts({ perPage: 1000 }),
-    services.catalog.listProducts({ search, categorySlug: category, size, availableOnly: available, sort, perPage: 48 }),
+    dbCatalog.listCategories(),
+    dbCatalog.listProducts({ perPage: 1000 }),
+    dbCatalog.listProducts({ search, categorySlug: category, size, availableOnly: available, sort, perPage: 48 }),
     getDropContext(),
   ]);
 

@@ -29,6 +29,27 @@ export function CheckoutForm() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   useEffect(() => setHydrated(true), []);
+  useEffect(() => {
+    fetch("/api/account/address").then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        if (!data?.customer) return;
+        setForm((current) => ({
+          ...current,
+          name: data.customer.name ?? current.name,
+          email: data.customer.email ?? current.email,
+          phone: data.address?.phone ?? current.phone,
+          ...(data.address ? {
+            recipientName: data.address.recipientName,
+            recipientPhone: data.address.phone,
+            province: data.address.province,
+            city: data.address.city,
+            district: data.address.district,
+            postalCode: data.address.postalCode,
+            line1: data.address.line1,
+          } : {}),
+        }));
+      }).catch(() => { /* Guest checkout tetap tersedia. */ });
+  }, []);
 
   const ids = useMemo(() => [...new Set(cartItems.map((item) => item.productId))].sort(), [cartItems]);
   const productsQuery = useQuery({

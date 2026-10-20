@@ -5,10 +5,17 @@ import type { CatalogService } from "../contracts";
 import { delay } from "./delay";
 
 export class MockCatalogService implements CatalogService {
+  private async sourceProducts(): Promise<Product[]> {
+    if (typeof window === "undefined") return products;
+    const response = await fetch("/api/catalog", { cache: "no-store" });
+    if (!response.ok) throw new Error("Katalog gagal dimuat");
+    return response.json();
+  }
+
   async listProducts(query: ProductListQuery = {}): Promise<Paginated<Product>> {
     await delay();
     const { page = 1, perPage = 24 } = query;
-    let list = products.filter((p) => p.status === "ACTIVE");
+    let list = (await this.sourceProducts()).filter((p) => p.status === "ACTIVE");
 
     if (query.search?.trim()) {
       const needle = query.search.trim().toLocaleLowerCase("id-ID");
@@ -49,12 +56,13 @@ export class MockCatalogService implements CatalogService {
 
   async getProductBySlug(slug: string): Promise<Product | null> {
     await delay();
-    return products.find((p) => p.slug === slug && p.status === "ACTIVE") ?? null;
+    return (await this.sourceProducts()).find((p) => p.slug === slug && p.status === "ACTIVE") ?? null;
   }
 
   async getProductsByIds(ids: ID[]): Promise<Product[]> {
     await delay(100);
-    return ids.map((id) => products.find((p) => p.id === id)).filter((p): p is Product => Boolean(p));
+    const source = await this.sourceProducts();
+    return ids.map((id) => source.find((p) => p.id === id)).filter((p): p is Product => Boolean(p));
   }
 
   async listCategories(): Promise<Category[]> {

@@ -20,6 +20,11 @@ export class MockDropService implements DropService {
   }
 
   async listDrops() {
+    if (typeof window !== "undefined") {
+      const response = await fetch("/api/drops", { cache: "no-store" });
+      if (!response.ok) throw new Error("Jadwal drop gagal dimuat");
+      return response.json() as Promise<{ drops: DropWithStatus[]; serverNow: string }>;
+    }
     await delay();
     // Di backend asli, `now` = jam server. Di mock, jam proses Next.js.
     const now = new Date();

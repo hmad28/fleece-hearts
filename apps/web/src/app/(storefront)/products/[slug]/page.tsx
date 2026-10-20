@@ -8,7 +8,7 @@ import { ProductGrid } from "@/components/product/product-grid";
 import { ProductPurchase } from "@/components/product/product-purchase";
 import { formatReleaseShortWIB, formatReleaseWIB } from "@/lib/datetime";
 import { getDropContext } from "@/lib/drop-context";
-import { services } from "@/services";
+import { dbCatalog } from "@/lib/storefront-data";
 
 type Params = Promise<{ slug: string }>;
 
@@ -18,20 +18,20 @@ function productTitle(p: { name: string; colorway?: string }) {
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
-  const product = await services.catalog.getProductBySlug(slug);
+  const product = await dbCatalog.getProductBySlug(slug);
   if (!product) return { title: "Produk tidak ditemukan" };
   return { title: product.seo?.title ?? productTitle(product), description: product.seo?.description };
 }
 
 export default async function ProductPage({ params }: { params: Params }) {
   const { slug } = await params;
-  const product = await services.catalog.getProductBySlug(slug);
+  const product = await dbCatalog.getProductBySlug(slug);
   if (!product) notFound();
 
   const [all, { lockedByProduct }, sizeGuide] = await Promise.all([
-    services.catalog.listProducts({ perPage: 1000 }),
+    dbCatalog.listProducts({ perPage: 1000 }),
     getDropContext(),
-    product.sizeGuideId ? services.catalog.getSizeGuide(product.sizeGuideId) : Promise.resolve(null),
+    product.sizeGuideId ? dbCatalog.getSizeGuide(product.sizeGuideId) : Promise.resolve(null),
   ]);
 
   const title = productTitle(product);

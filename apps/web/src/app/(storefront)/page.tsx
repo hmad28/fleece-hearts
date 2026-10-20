@@ -7,18 +7,20 @@ import { Media } from "@/components/ui/media";
 import { homeCopy } from "@/config/content";
 import { formatReleaseWIB } from "@/lib/datetime";
 import { getDropContext } from "@/lib/drop-context";
-import { services } from "@/services";
+import { getSiteContent } from "@/lib/site-content";
+import { dbCatalog } from "@/lib/storefront-data";
 
 export default async function HomePage() {
   // Countdown & status drop bergantung jam server → render per request.
   await connection();
 
-  const [{ serverNow, featured: drop, lockedByProduct }, latest, categories] = await Promise.all([
+  const [{ serverNow, featured: drop, lockedByProduct }, latest, categories, content] = await Promise.all([
     getDropContext(),
-    services.catalog.listProducts({ sort: "newest", perPage: 8 }),
-    services.catalog.listCategories(),
+    dbCatalog.listProducts({ sort: "newest", perPage: 8 }),
+    dbCatalog.listCategories(),
+    getSiteContent(),
   ]);
-  const { hero, looks, detail } = homeCopy;
+  const { looks, detail } = homeCopy;
 
   return (
     <>
@@ -26,7 +28,7 @@ export default async function HomePage() {
       {drop && (
         <section aria-labelledby="hero-title" className="relative">
           <Media
-            asset={{ url: "/images/dummy/hero-model.jpg", alt: "Model memakai polar fleece kuning di depan dinding pasir" }}
+            asset={drop.banner}
             priority
             sizes="100vw"
             className="aspect-[4/5] w-full md:hidden"
@@ -43,14 +45,14 @@ export default async function HomePage() {
           <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 hidden w-[55%] bg-gradient-to-r from-[#dcc49c]/90 via-[#dcc49c]/55 to-transparent md:block" />
           <div className="px-4 pt-8 pb-4 md:absolute md:inset-y-0 md:left-0 md:flex md:w-1/2 md:flex-col md:justify-end md:px-10 md:pb-14 lg:px-14">
             <p className="text-sm">
-              {hero.eyebrow} · {drop.status === "UPCOMING" ? formatReleaseWIB(drop.releaseAt) : "Sudah rilis"}
+              {content.heroEyebrow} · {drop.status === "UPCOMING" ? formatReleaseWIB(drop.releaseAt) : "Sudah rilis"}
             </p>
             <h1 id="hero-title" className="font-display mt-3 text-[clamp(4rem,10vw,10rem)]">
               {drop.code}
               <br />
               {drop.name}
             </h1>
-            <p className="mt-5 max-w-sm text-base leading-relaxed">{hero.body}</p>
+            <p className="mt-5 max-w-sm text-base leading-relaxed">{content.heroBody}</p>
             <div className="mt-7 flex flex-wrap items-end gap-x-10 gap-y-6">
               <ButtonLink href={`/drops/${drop.slug}`} size="lg">
                 {drop.status === "UPCOMING" ? "Lihat koleksi" : "Belanja drop"}
@@ -62,7 +64,7 @@ export default async function HomePage() {
       )}
 
       {/* BARU MASUK */}
-      <section aria-labelledby="latest-heading" className="px-4 pt-20 md:px-10 md:pt-28 lg:px-14">
+      {content.showLatest && <section aria-labelledby="latest-heading" className="px-4 pt-20 md:px-10 md:pt-28 lg:px-14">
         <div className="flex items-baseline justify-between gap-4">
           <h2 id="latest-heading" className="font-display text-[clamp(2.25rem,4.5vw,4rem)]">
             Baru masuk
@@ -74,10 +76,10 @@ export default async function HomePage() {
         <div className="mt-8 md:mt-10">
           <ProductGrid products={latest.items} lockedByProduct={lockedByProduct} />
         </div>
-      </section>
+      </section>}
 
       {/* LOOKBOOK — dua foto full-bleed berdampingan */}
-      <section aria-label="Lookbook" className="mt-24 grid md:mt-32 md:grid-cols-2">
+      {content.showLookbook && <section aria-label="Lookbook" className="mt-24 grid md:mt-32 md:grid-cols-2">
         {looks.map((l) => (
           <Link key={l.href} href={l.href} className="group relative block">
             <Media
@@ -92,10 +94,10 @@ export default async function HomePage() {
             </div>
           </Link>
         ))}
-      </section>
+      </section>}
 
       {/* DETAIL BAHAN — satu-satunya blok kuning */}
-      <section aria-labelledby="detail-heading" className="bg-brand">
+      {content.showMaterial && <section aria-labelledby="detail-heading" className="bg-brand">
         <div className="grid md:grid-cols-2">
           <Media
             asset={{ url: detail.image, alt: detail.imageAlt }}
@@ -120,10 +122,10 @@ export default async function HomePage() {
             </ButtonLink>
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* KATEGORI — daftar tipografis */}
-      <section aria-labelledby="category-heading" className="px-4 pt-24 md:px-10 md:pt-32 lg:px-14">
+      {content.showCategories && <section aria-labelledby="category-heading" className="px-4 pt-24 md:px-10 md:pt-32 lg:px-14">
         <h2 id="category-heading" className="text-sm text-stone">
           Belanja per kategori
         </h2>
@@ -137,7 +139,7 @@ export default async function HomePage() {
             </li>
           ))}
         </ul>
-      </section>
+      </section>}
     </>
   );
 }

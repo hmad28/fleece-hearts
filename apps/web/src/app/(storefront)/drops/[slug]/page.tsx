@@ -6,13 +6,15 @@ import { ProductGrid } from "@/components/product/product-grid";
 import { Media } from "@/components/ui/media";
 import { formatReleaseWIB } from "@/lib/datetime";
 import { getDropContext } from "@/lib/drop-context";
-import { services } from "@/services";
+import { dbCatalog, dbDrops } from "@/lib/storefront-data";
 
 type Params = Promise<{ slug: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
-  const res = await services.drops.getDropBySlug(slug);
+  const { drops, serverNow } = await dbDrops();
+  const drop = drops.find((item) => item.slug === slug);
+  const res = drop ? { drop, serverNow } : null;
   return { title: res ? `${res.drop.code} — ${res.drop.name}` : "Drop tidak ditemukan" };
 }
 
@@ -22,7 +24,7 @@ export default async function DropPage({ params }: { params: Params }) {
   const drop = drops.find((d) => d.slug === slug);
   if (!drop) notFound();
 
-  const products = await services.catalog.getProductsByIds(drop.productIds);
+  const products = await dbCatalog.getProductsByIds(drop.productIds);
   const upcoming = drop.status === "UPCOMING";
 
   return (

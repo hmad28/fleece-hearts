@@ -1,5 +1,5 @@
 import type { DropWithStatus, ID } from "@fh/types";
-import { services } from "@/services";
+import { dbDrops } from "@/lib/storefront-data";
 
 export interface DropContext {
   drops: DropWithStatus[];
@@ -11,7 +11,7 @@ export interface DropContext {
 }
 
 export async function getDropContext(): Promise<DropContext> {
-  const { drops, serverNow } = await services.drops.listDrops();
+  const { drops, serverNow } = await dbDrops();
   const lockedByProduct = new Map<ID, DropWithStatus>();
   for (const d of drops) {
     if (d.status !== "UPCOMING") continue;

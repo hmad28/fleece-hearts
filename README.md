@@ -10,8 +10,8 @@ Monorepo storefront + admin + backend untuk Fleece Hearts (klien: Oman, via Hamm
 ```text
 apps/
   web/         Next.js 16 — storefront, customer portal, admin (deploy: Vercel)
-  api/         Fastify backend (Tahap 4, belum dibuat — deploy: VPS)
-  worker/      BullMQ worker (Tahap 4–6, belum dibuat)
+  api/         Rencana Fastify backend untuk transaksi nyata
+  worker/      Rencana worker untuk pekerjaan latar
 packages/
   types/       Kontrak data domain (Product, Drop, Order, Payment, Shipping, ...)
   shared/      Helper domain murni (format rupiah, status stok, status drop, countdown)
@@ -38,10 +38,53 @@ pnpm typecheck             # cek tipe semua package
 pnpm build                 # build semua
 ```
 
+## Neon Postgres dan Auth
+
+Proyek Neon ditautkan lewat `.neon` (diabaikan Git); layanan yang dideklarasikan di
+`neon.ts` adalah Postgres dan Neon Auth. Setelah `neon login`, jalankan `neon deploy`
+di root untuk menyinkronkan konfigurasi dan menarik variabel Neon ke `.env.local` root.
+Simpan `NEON_AUTH_COOKIE_SECRET` (string acak minimal 32 karakter) di file itu juga.
+Script `dev` dan `build` web menyalin variabel root ke `apps/web/.env.local` tanpa
+menghapus kunci lokal lain. Keduanya diabaikan Git.
+
+Jalankan semua migrasi dan seed katalog awal dengan koneksi langsung (`DATABASE_URL_UNPOOLED`):
+
+```bash
+node --env-file=.env.local apps/web/scripts/migrate.mjs
+node --env-file=.env.local --import tsx apps/web/scripts/seed.ts
+```
+
+`/auth` menyediakan daftar/masuk. `/account` menyimpan alamat, menampilkan riwayat
+pesanan demo, dan menyediakan chat dua arah dengan admin. Saat masuk, checkout otomatis
+mengisi data akun dan alamat. Katalog, stok, drop, konten beranda, dan chat tersimpan di
+Neon Postgres. Checkout tamu dan pembayaran demo masih memakai browser; pesanan yang
+dibuat saat masuk juga disalin ke Postgres untuk dashboard customer dan admin.
+
+`/admin` berisi ringkasan, produk, mutasi stok, drop, pesanan demo, CMS beranda,
+inbox chat, dan manajemen staf. Email owner awal `fleecehearts@gmail.com` tersimpan
+sebagai undangan di tabel `admin_staff`. Akun email tersebut belum ada di Neon Auth;
+daftarkan lewat `/auth`, lalu kirim dan masukkan kode verifikasi dari `/account` untuk
+mengaktifkan akses admin. Setelah
+masuk, owner dapat menambah owner/admin baru atau mencabut akses lama lewat
+`/admin/staff`. Staf baru harus punya akun Neon Auth dengan email terverifikasi.
+`ADMIN_USER_IDS` tetap tersedia untuk allowlist server berdasarkan ID akun yang sudah
+ada, bila diperlukan. ID akun dapat dilihat di Neon SQL Editor:
+
+```sql
+SELECT id FROM neon_auth."user" WHERE email = 'email-staf@example.com';
+```
+
+Foto produk dan banner drop dapat diunggah dari dashboard melalui UploadThing.
+Unggahan dibatasi untuk admin, satu gambar maksimal 8 MB, lalu URL disimpan ketika
+form produk/drop disimpan. Untuk Vercel, set `DATABASE_URL`, `NEON_AUTH_BASE_URL`,
+`NEON_AUTH_COOKIE_SECRET`, dan `UPLOADTHING_TOKEN` sebagai env server, lalu daftarkan domain situs di trusted
+domains Neon Auth. Jalankan migrasi dan seed pada branch Neon deployment sebelum
+merilis aplikasi. Jangan mengaktifkan pembayaran nyata sebelum order, harga, dan
+reservasi stok divalidasi secara transaksional di backend.
+
 ## Aturan penting
 
-1. **UI tidak boleh import mock data langsung.** Selalu lewat `services` (`apps/web/src/services`).
-   Sekarang `NEXT_PUBLIC_DATA_SOURCE=mock`; di Tahap 4 tinggal tambah adapter `api` tanpa ubah UI.
+1. **Katalog dan drop toko memakai Postgres.** Data awal berasal dari seed dummy; checkout demo tetap lewat adapter mock di `apps/web/src/services`.
 2. **Uang = integer rupiah.** Format pakai `formatRupiah` dari `@fh/shared`.
 3. **Status drop dari jam server**, bukan jam device (`getDropStatus`, `DropCountdown`).
 4. **Data dummy ditandai `isDummy: true`**. Nama, harga, spesifikasi, stok, foto AI,
@@ -54,7 +97,7 @@ pnpm build                 # build semua
 |---|---|---|
 | Logo | `apps/web/public/brand/logo-mark.svg` | ✅ Sudah divektorkan dari logo klien (`logo-source.jpg`) |
 | Font Coolvetica | `apps/web/public/fonts/coolvetica-regular.woff2` | Konfirmasi lisensi web dulu |
-| Foto produk/banner | sementara foto AI di `apps/web/public/images/dummy/`; nanti Cloudflare R2 | Ganti `url` di mock data dengan foto asli |
+| Foto produk/banner | sementara foto AI di `apps/web/public/images/dummy/` | Gambar baru dapat diunggah melalui UploadThing dari dashboard admin |
 | Kontak & sosmed | `apps/web/src/config/site.ts` | Nilai `null` = belum ada |
 
 ## Alur demo pembelian
@@ -65,5 +108,9 @@ Setelah pesanan dibuat, tekan **Simulasikan pembayaran berhasil**. Halaman konfi
 memperbarui perjalanan pengiriman dalam sekitar 25 detik. `/orders` dapat menemukan kembali
 pesanan dengan nomor order dan email/WhatsApp yang dipakai saat checkout.
 
-Pesanan dan pembayaran demo disimpan di `localStorage` browser yang sama. Tidak ada transaksi
-nyata atau pengiriman data checkout ke backend. Gunakan data kontak contoh saat mencoba demo.
+Pesanan dan pembayaran demo disimpan di `localStorage` browser. Jika customer masuk,
+salinan pesanan demo juga disimpan di Postgres, sehingga admin dapat mengubah status dan
+customer dapat melihatnya dari `/account/orders`. Ini belum menjadi sistem transaksi
+nyata: total berasal dari simulasi browser, stok tidak direservasi, dan tidak ada gateway
+pembayaran atau kurir sungguhan. Chat menyimpan pesan customer dan admin di Postgres,
+dengan pembaruan tampilan setiap lima detik; isi pesan tidak dienkripsi ujung ke ujung.

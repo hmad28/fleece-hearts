@@ -25,7 +25,8 @@ export function SiteHeader() {
             ))}
           </ul>
         </nav>
-        <div className="flex justify-end">
+        <div className="flex items-center justify-end gap-4">
+          <Link href="/account" className="text-sm underline-offset-4 hover:underline">Akun</Link>
           <CartButton />
         </div>
       </div>

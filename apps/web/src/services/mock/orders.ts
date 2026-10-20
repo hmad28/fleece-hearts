@@ -25,9 +25,11 @@ export class MockOrderService implements OrderService {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}"); } catch { return {}; }
   }
 
-  private save(order: Order) {
+  private async save(order: Order) {
     if (typeof window === "undefined") return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...this.readAll(), [order.id]: order }));
+    // Akun masuk mendapat riwayat order demo lintas browser untuk customer/admin.
+    try { await fetch("/api/demo-orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(order) }); } catch { /* Guest checkout and offline demo remain local. */ }
   }
 
   private nextOrderNumber(now: Date): string {
@@ -120,7 +122,7 @@ export class MockOrderService implements OrderService {
       createdAt: now.toISOString(),
       timeline: [{ at: now.toISOString(), type: "ORDER", status: "PENDING", note: "Order dibuat" }],
     };
-    this.save(order);
+    await this.save(order);
     return order;
   }
 
@@ -176,7 +178,7 @@ export class MockOrderService implements OrderService {
         };
       }
     }
-    if (next !== order) this.save(next);
+    if (next !== order) await this.save(next);
     return next;
   }
 }
