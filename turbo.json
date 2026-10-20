@@ -3,6 +3,18 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "env": [
+        "ADMIN_USER_IDS",
+        "DATABASE_URL",
+        "DATABASE_URL_UNPOOLED",
+        "NEON_AUTH_BASE_URL",
+        "NEON_AUTH_COOKIE_SECRET",
+        "NEON_AUTH_JWKS_URL",
+        "NEON_BRANCH",
+        "UPLOADTHING_APP_ID",
+        "UPLOADTHING_SECRET",
+        "UPLOADTHING_TOKEN"
+      ],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "typecheck": {
