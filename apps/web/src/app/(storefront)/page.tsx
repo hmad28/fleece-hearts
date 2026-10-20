@@ -1,7 +1,5 @@
-import { formatRupiah } from "@fh/shared";
 import Link from "next/link";
 import { connection } from "next/server";
-import { LogoMark } from "@/components/brand/wordmark";
 import { DropCountdown } from "@/components/drop/drop-countdown";
 import { ProductGrid } from "@/components/product/product-grid";
 import { ButtonLink } from "@/components/ui/button";
@@ -15,148 +13,130 @@ export default async function HomePage() {
   // Countdown & status drop bergantung jam server → render per request.
   await connection();
 
-  const [{ serverNow, featured: drop, lockedByProduct }, latest, all, categories] = await Promise.all([
+  const [{ serverNow, featured: drop, lockedByProduct }, latest, categories] = await Promise.all([
     getDropContext(),
     services.catalog.listProducts({ sort: "newest", perPage: 8 }),
-    services.catalog.listProducts({ perPage: 1000 }),
     services.catalog.listCategories(),
   ]);
-
-  const featured = all.items.filter((p) => p.isFeatured && !lockedByProduct.has(p.id));
-  const heroA = featured[0];
-  const heroB = featured[1];
-  const categoryTiles = categories
-    .map((c) => ({ category: c, cover: all.items.find((p) => p.categoryId === c.id)?.images[0] }))
-    .filter((t) => t.cover);
+  const { hero, looks, detail } = homeCopy;
 
   return (
     <>
-      {/* HERO */}
-      <section className="overflow-hidden bg-sand">
-        <div className="mx-auto grid max-w-[90rem] items-center gap-10 px-4 pt-10 pb-14 md:grid-cols-[1.05fr_1fr] md:gap-6 md:px-8 md:py-20">
-          <div>
-            <LogoMark draw title="Fleece Hearts" className="h-20 w-auto md:h-28" />
-            <h1 className="font-display mt-8 max-w-[11ch] text-[clamp(3.25rem,8.5vw,7.5rem)]">{homeCopy.hero.title}</h1>
-            <p className="mt-6 max-w-md text-lg leading-relaxed">{homeCopy.hero.body}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="/shop" size="lg">
-                Belanja sekarang
-              </ButtonLink>
-              {drop && (
-                <ButtonLink href={`/drops/${drop.slug}`} variant="outline" size="lg">
-                  Lihat drop {drop.code}
-                </ButtonLink>
-              )}
-            </div>
-          </div>
-
-          {heroA && heroB && (
-            <div className="relative mx-auto aspect-square w-full max-w-[34rem]">
-              <Link
-                href={`/products/${heroB.slug}`}
-                className="absolute top-[6%] right-0 w-[58%] rotate-[4deg] shadow-[0_18px_40px_-20px_rgba(0,0,0,.45)] transition-transform duration-300 hover:rotate-[2deg]"
-              >
-                <Media asset={heroB.images[1] ?? heroB.images[0]!} sizes="(min-width: 768px) 22vw, 55vw" className="aspect-[4/5] w-full" />
-              </Link>
-              <Link
-                href={`/products/${heroA.slug}`}
-                className="absolute bottom-[2%] left-0 w-[62%] -rotate-[5deg] shadow-[0_18px_40px_-20px_rgba(0,0,0,.45)] transition-transform duration-300 hover:-rotate-[3deg]"
-              >
-                <Media asset={heroA.images[0]!} priority sizes="(min-width: 768px) 24vw, 60vw" className="aspect-[4/5] w-full" />
-              </Link>
-              <span className="absolute right-[4%] bottom-[8%] rounded-full bg-paper px-4 py-2 text-sm shadow-sm">
-                {heroA.name} · {formatRupiah(heroA.price)}
-              </span>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* DROP — satu-satunya blok kuning di halaman */}
+      {/* HERO — foto campaign full-bleed. Desktop: teks di atas dinding kosong sebelah kiri. */}
       {drop && (
-        <section aria-labelledby="drop-heading" className="bg-brand">
-          <div className="mx-auto grid max-w-[90rem] items-center gap-10 px-4 py-14 md:grid-cols-[1.3fr_1fr] md:px-8 md:py-20">
-            <div>
-              <p className="text-base md:text-lg">
-                {drop.status === "UPCOMING" ? `Rilis ${formatReleaseWIB(drop.releaseAt)}` : "Sudah rilis"}
-              </p>
-              <h2 id="drop-heading" className="font-display mt-3 text-[clamp(2.75rem,7vw,6rem)]">
-                {drop.code} {drop.name}
-              </h2>
-              {drop.tagline && <p className="mt-4 max-w-md text-lg">{drop.tagline}</p>}
-              {drop.status === "UPCOMING" && (
-                <div className="mt-10">
-                  <DropCountdown releaseAt={drop.releaseAt} serverNow={serverNow} />
-                </div>
-              )}
-              <ButtonLink href={`/drops/${drop.slug}`} variant="onBrand" size="lg" className="mt-10">
-                {drop.status === "UPCOMING" ? "Intip koleksinya" : "Belanja drop ini"}
+        <section aria-labelledby="hero-title" className="relative">
+          <Media
+            asset={{ url: "/images/dummy/hero-model.jpg", alt: "Model memakai polar fleece kuning di depan dinding pasir" }}
+            priority
+            sizes="100vw"
+            className="aspect-[4/5] w-full md:hidden"
+            imgClassName="object-[50%_30%]"
+          />
+          <Media
+            asset={drop.banner}
+            priority
+            sizes="100vw"
+            className="hidden h-[calc(100svh-6.25rem)] max-h-[56rem] min-h-[36rem] w-full md:block"
+            imgClassName="object-[72%_center]"
+          />
+          {/* Lapisan pasir tipis di kiri supaya teks tetap terbaca di atas pintu/tanaman. */}
+          <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 hidden w-[55%] bg-gradient-to-r from-[#dcc49c]/90 via-[#dcc49c]/55 to-transparent md:block" />
+          <div className="px-4 pt-8 pb-4 md:absolute md:inset-y-0 md:left-0 md:flex md:w-1/2 md:flex-col md:justify-end md:px-10 md:pb-14 lg:px-14">
+            <p className="text-sm">
+              {hero.eyebrow} · {drop.status === "UPCOMING" ? formatReleaseWIB(drop.releaseAt) : "Sudah rilis"}
+            </p>
+            <h1 id="hero-title" className="font-display mt-3 text-[clamp(4rem,10vw,10rem)]">
+              {drop.code}
+              <br />
+              {drop.name}
+            </h1>
+            <p className="mt-5 max-w-sm text-base leading-relaxed">{hero.body}</p>
+            <div className="mt-7 flex flex-wrap items-end gap-x-10 gap-y-6">
+              <ButtonLink href={`/drops/${drop.slug}`} size="lg">
+                {drop.status === "UPCOMING" ? "Lihat koleksi" : "Belanja drop"}
               </ButtonLink>
+              {drop.status === "UPCOMING" && <DropCountdown releaseAt={drop.releaseAt} serverNow={serverNow} size="sm" />}
             </div>
-            <Link href={`/drops/${drop.slug}`} className="block" tabIndex={-1} aria-hidden>
-              <Media
-                asset={{ url: "/mock/campaign/ch01-tall.svg", alt: "" }}
-                sizes="(min-width: 768px) 38vw, 92vw"
-                className="aspect-[4/5] w-full"
-              />
-            </Link>
           </div>
         </section>
       )}
 
       {/* BARU MASUK */}
-      <section aria-labelledby="latest-heading" className="mx-auto max-w-[90rem] px-4 pt-20 md:px-8 md:pt-28">
-        <div className="flex items-end justify-between gap-4">
-          <h2 id="latest-heading" className="font-display text-[clamp(2.5rem,5vw,4.5rem)]">
+      <section aria-labelledby="latest-heading" className="px-4 pt-20 md:px-10 md:pt-28 lg:px-14">
+        <div className="flex items-baseline justify-between gap-4">
+          <h2 id="latest-heading" className="font-display text-[clamp(2.25rem,4.5vw,4rem)]">
             Baru masuk
           </h2>
-          <Link href="/shop" className="pb-1.5 text-sm underline underline-offset-4">
-            Lihat semua produk
+          <Link href="/shop" className="text-sm underline underline-offset-4">
+            Lihat semua
           </Link>
         </div>
-        <div className="mt-8 md:mt-12">
+        <div className="mt-8 md:mt-10">
           <ProductGrid products={latest.items} lockedByProduct={lockedByProduct} />
         </div>
       </section>
 
-      {/* KATEGORI */}
-      <section aria-labelledby="category-heading" className="pt-24 md:pt-32">
-        <h2 id="category-heading" className="font-display mx-auto max-w-[90rem] px-4 text-[clamp(2.5rem,5vw,4.5rem)] md:px-8">
-          Belanja per kategori
-        </h2>
-        <ul className="mx-auto mt-8 flex max-w-[90rem] snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 md:mt-12 md:grid md:grid-cols-6 md:gap-4 md:overflow-visible md:px-8">
-          {categoryTiles.map(({ category, cover }) => (
-            <li key={category.id} className="w-[42%] shrink-0 snap-start sm:w-[30%] md:w-auto">
-              <Link href={`/shop?category=${category.slug}`} className="group block">
-                <Media asset={cover!} sizes="(min-width: 768px) 15vw, 42vw" className="aspect-[4/5] w-full transition-transform duration-300 group-hover:-translate-y-1" />
-                <span className="mt-3 block text-base group-hover:underline group-hover:underline-offset-4">{category.name}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+      {/* LOOKBOOK — dua foto full-bleed berdampingan */}
+      <section aria-label="Lookbook" className="mt-24 grid md:mt-32 md:grid-cols-2">
+        {looks.map((l) => (
+          <Link key={l.href} href={l.href} className="group relative block">
+            <Media
+              asset={{ url: l.image, alt: l.alt }}
+              sizes="(min-width: 768px) 50vw, 100vw"
+              className="aspect-[4/5] w-full"
+              imgClassName="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.03]"
+            />
+            <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 bg-gradient-to-t from-black/55 to-transparent px-4 pt-24 pb-5 text-paper md:px-8 md:pb-7">
+              <p className="font-display text-[clamp(1.75rem,3vw,2.75rem)]">{l.title}</p>
+              <span className="shrink-0 pb-1 text-sm underline underline-offset-4">Belanja</span>
+            </div>
+          </Link>
+        ))}
       </section>
 
-      {/* CERITA BRAND */}
-      <section aria-labelledby="story-heading" className="mx-auto max-w-[90rem] px-4 pt-24 md:px-8 md:pt-32">
-        <div className="grid gap-10 md:grid-cols-2 md:gap-16">
-          <div className="flex aspect-[4/3] items-center justify-center bg-sand md:aspect-auto md:min-h-[32rem]">
-            <LogoMark className="h-1/2 w-auto" />
-          </div>
-          <div className="flex flex-col justify-center">
-            <h2 id="story-heading" className="font-display text-[clamp(2.5rem,5vw,4.5rem)]">
-              {homeCopy.story.title}
+      {/* DETAIL BAHAN — satu-satunya blok kuning */}
+      <section aria-labelledby="detail-heading" className="bg-brand">
+        <div className="grid md:grid-cols-2">
+          <Media
+            asset={{ url: detail.image, alt: detail.imageAlt }}
+            sizes="(min-width: 768px) 50vw, 100vw"
+            className="aspect-[4/5] w-full md:aspect-auto md:min-h-[44rem]"
+          />
+          <div className="flex flex-col justify-center px-4 py-14 md:px-12 lg:px-20">
+            <h2 id="detail-heading" className="font-display max-w-[10ch] text-[clamp(2.75rem,5.5vw,5.5rem)]">
+              {detail.title}
             </h2>
-            <p className="mt-6 max-w-lg text-lg leading-relaxed">{homeCopy.story.body}</p>
-            <dl className="mt-10 grid gap-6 border-t border-ink pt-8 sm:grid-cols-3">
-              {homeCopy.story.points.map((p) => (
-                <div key={p.title}>
-                  <dt className="font-medium">{p.title}</dt>
-                  <dd className="mt-1.5 text-sm leading-relaxed text-stone">{p.body}</dd>
+            <p className="mt-6 max-w-md text-lg leading-relaxed">{detail.body}</p>
+            <dl className="mt-10 grid max-w-md grid-cols-[auto_1fr] gap-x-8 gap-y-3 border-t border-ink pt-6 text-sm">
+              {detail.specs.map((s) => (
+                <div key={s.label} className="contents">
+                  <dt className="text-ink/60">{s.label}</dt>
+                  <dd>{s.value}</dd>
                 </div>
               ))}
             </dl>
+            <ButtonLink href={detail.href} variant="ink" size="lg" className="mt-10 self-start">
+              Lihat Polar Fleece Zip
+            </ButtonLink>
           </div>
         </div>
+      </section>
+
+      {/* KATEGORI — daftar tipografis */}
+      <section aria-labelledby="category-heading" className="px-4 pt-24 md:px-10 md:pt-32 lg:px-14">
+        <h2 id="category-heading" className="text-sm text-stone">
+          Belanja per kategori
+        </h2>
+        <ul className="font-display mt-4 flex flex-wrap gap-x-[0.35em] text-[clamp(2.5rem,7vw,6.5rem)]">
+          {categories.map((c, i) => (
+            <li key={c.id} className="flex">
+              <Link href={`/shop?category=${c.slug}`} className="decoration-[0.06em] underline-offset-[0.12em] hover:underline">
+                {c.name}
+              </Link>
+              {i < categories.length - 1 && <span className="text-stone/40">,</span>}
+            </li>
+          ))}
+        </ul>
       </section>
     </>
   );

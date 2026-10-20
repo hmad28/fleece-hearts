@@ -24,7 +24,7 @@ export function getMockDrops(now: Date): Drop[] {
       tagline: "Polar fleece pertama kami, dalam dua warna.",
       description:
         "Chapter pertama Fleece Hearts: jaket polar fleece berkerah tinggi dalam warna Butter dan Black, plus Mark Cap. Stok terbatas, tidak ada restock untuk warna ini.",
-      banner: { id: "drop_ch01_banner", url: "/mock/campaign/ch01-wide.svg", alt: "Ilustrasi campaign CH01 Warm Up: dua jaket polar fleece dan topi", width: 3200, height: 2000 },
+      banner: { id: "drop_ch01_banner", url: "/images/dummy/campaign-wide.jpg", alt: "Dua model memakai polar fleece hitam dan kuning di depan dinding pasir", width: 1376, height: 768 },
       releaseAt: nextReleaseAt(now),
       productIds: ["p_006", "p_007", "p_010"],
       isDummy: true,

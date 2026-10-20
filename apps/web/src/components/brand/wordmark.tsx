@@ -54,8 +54,8 @@ export function LogoMark({ className, draw, title }: LogoMarkProps) {
 export function Wordmark({ className }: { className?: string }) {
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <LogoMark className="h-7 w-auto" />
-      <span className="font-display text-[1.45rem] leading-none tracking-[-0.03em]">Fleece Hearts</span>
+      <LogoMark className="h-6 w-auto" />
+      <span className="text-[1.05rem] leading-none font-semibold tracking-[-0.02em]">Fleece Hearts</span>
     </span>
   );
 }

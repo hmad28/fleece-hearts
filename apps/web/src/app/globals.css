@@ -27,12 +27,12 @@
   --color-brand: #ffc200;
   --color-brand-press: #e6ae00;
   --color-ink: #000000;
-  --color-paper: #f7f2ea;
+  --color-paper: #f6f3ee;
   --color-sand: #e2d3be;
   --color-sand-deep: #d3bfa3;
-  --color-mist: #efe6d8;
-  --color-stone: #6e6457;
-  --color-line: #ddd0be;
+  --color-mist: #ece6dc;
+  --color-stone: #6f6a63;
+  --color-line: #e1dad0;
   --color-danger: #b42318;
 
   --font-display: "Coolvetica", "Inter Tight Variable", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -95,10 +95,10 @@
 @utility font-display {
   font-family: var(--font-display);
   /* 600 hanya berlaku untuk fallback Inter Tight; Coolvetica cuma punya 1 bobot. */
-  font-weight: 600;
+  font-weight: 500;
   font-synthesis: none;
-  letter-spacing: -0.035em;
-  line-height: 0.9;
+  letter-spacing: -0.045em;
+  line-height: 0.88;
 }
 
 @utility tabular {

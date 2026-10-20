@@ -12,16 +12,18 @@ interface MediaProps {
   tone?: "mist" | "ink";
   /** Posisi label placeholder; "top" untuk hero yang bagian bawahnya tertutup teks. */
   labelAt?: "top" | "bottom";
+  /** Kelas tambahan untuk <img>, mis. "object-[70%_center]" untuk titik fokus. */
+  imgClassName?: string;
 }
 
 /**
  * Foto produk/banner. Kalau `url` null (foto klien belum ada), tampilkan placeholder netral
  * dengan ukuran yang sama — layout tidak berubah saat foto asli masuk.
  */
-export function Media({ asset, className, sizes = "100vw", priority, placeholderLabel = "Foto menyusul", tone = "mist", labelAt = "bottom" }: MediaProps) {
+export function Media({ asset, className, sizes = "100vw", priority, placeholderLabel = "Foto menyusul", tone = "mist", labelAt = "bottom", imgClassName }: MediaProps) {
   if (asset.url) {
     return (
-      <div className={cn("relative overflow-hidden bg-mist", className)}>
+      <div className={cn("relative overflow-hidden bg-sand", className)}>
         <Image
           src={asset.url}
           alt={asset.alt}
@@ -30,7 +32,7 @@ export function Media({ asset, className, sizes = "100vw", priority, placeholder
           priority={priority}
           // Ilustrasi dummy berupa SVG: tidak perlu dioptimasi.
           unoptimized={asset.url.endsWith(".svg")}
-          className="object-cover"
+          className={cn("object-cover", imgClassName)}
         />
       </div>
     );

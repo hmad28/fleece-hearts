@@ -14,8 +14,8 @@ export function SiteFooter() {
   ].filter(Boolean) as string[];
 
   return (
-    <footer className="mt-28 bg-ink text-paper">
-      <div className="mx-auto max-w-[90rem] px-4 pt-16 pb-8 md:px-8 md:pt-20">
+    <footer className="mt-28 bg-ink text-paper md:mt-36">
+      <div className="px-4 pt-16 pb-8 md:px-10 md:pt-20 lg:px-14">
         <div className="grid grid-cols-1 gap-10 border-b border-paper/15 pb-14 md:grid-cols-[1.2fr_1fr] md:items-end">
           <div>
             <h2 className="font-display max-w-[14ch] text-[clamp(2.25rem,4.5vw,3.75rem)]">{homeCopy.newsletter.title}</h2>
@@ -60,11 +60,9 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-20 flex items-end justify-between gap-6">
-          <p aria-hidden className="font-display text-[clamp(3rem,13vw,11.5rem)] leading-[0.8] select-none">
-            Fleece Hearts
-          </p>
-          <LogoMark className="hidden h-[clamp(4rem,10vw,9rem)] w-auto shrink-0 text-brand sm:block" />
+        <div className="mt-20 flex items-center gap-4">
+          <LogoMark className="h-14 w-auto text-brand md:h-20" />
+          <p className="font-display text-[clamp(2.5rem,6vw,5rem)]">Fleece Hearts</p>
         </div>
         <p className="mt-8 text-xs text-paper/50">
           © {new Date().getFullYear()} {siteConfig.name}

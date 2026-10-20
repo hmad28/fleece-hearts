@@ -1,21 +1,28 @@
 /**
- * ⚠️ COPY DUMMY untuk demo — tagline, cerita brand, dan poin keunggulan BELUM dari klien.
- * Nanti dikelola dari CMS (blueprint §4). Ganti/konfirmasi ke klien sebelum go-live.
+ * ⚠️ COPY DUMMY untuk demo — BELUM dari klien.
+ * Nanti dikelola dari CMS (blueprint §4). Konfirmasi/ganti sebelum go-live.
  */
 export const homeCopy = {
   isDummy: true,
   hero: {
-    title: "Fleece buat hari-hari biasa.",
-    body: "Hoodie, crewneck, dan polar fleece dengan potongan boxy. Dirilis per chapter, stoknya terbatas.",
+    eyebrow: "Drop pertama",
+    body: "Polar fleece tebal berkerah tinggi, dalam Butter dan Black. Jumlahnya terbatas, tanpa restock.",
   },
-  story: {
-    title: "Dari satu goresan tangan.",
-    body: "Logo kami digambar tangan, empat garis yang membentuk F dan H. Begitu juga cara kami bikin baju: sedikit model, dikerjakan pelan, dipakai lama.",
-    points: [
-      { title: "Fleece 300–330 gsm", body: "Tebal tapi tetap adem untuk cuaca tropis." },
-      { title: "Potongan boxy", body: "Bahu turun, lengan sedikit panjang, rapi dipakai siapa saja." },
-      { title: "Rilis per chapter", body: "Setiap drop punya jumlah terbatas dan tidak di-restock." },
+  looks: [
+    { image: "/images/dummy/look-hoodie-steps.jpg", alt: "Model memakai hoodie hitam dan sweatpants oat", title: "Everyday Hoodie", href: "/products/everyday-hoodie-black" },
+    { image: "/images/dummy/look-rooftop.jpg", alt: "Dua model memakai crewneck hijau dan kaos putih", title: "Heart Crewneck & Monogram Tee", href: "/shop?category=crewneck" },
+  ],
+  detail: {
+    title: "Tebal, tapi tetap adem.",
+    body: "Polar fleece 320 gsm dari poliester daur ulang, anti-pilling, dengan resleting YKK. Dipotong boxy supaya pas dipakai di atas kaos.",
+    specs: [
+      { label: "Bahan", value: "Polar fleece 320 gsm" },
+      { label: "Potongan", value: "Boxy, bahu turun" },
+      { label: "Rilis", value: "Terbatas, tanpa restock" },
     ],
+    image: "/images/dummy/detail-fleece.jpg",
+    imageAlt: "Detail bahan polar fleece kuning dengan resleting hitam",
+    href: "/products/polar-fleece-zip-butter",
   },
   newsletter: {
     title: "Kabari aku pas drop berikutnya.",

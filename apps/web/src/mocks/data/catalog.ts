@@ -1,7 +1,7 @@
 /**
  * ⚠️ DATA DUMMY — BUKAN DATA KLIEN.
  * Nama, harga, deskripsi, bahan, stok, dan gambar di sini dibuat untuk demo (isDummy: true).
- * Gambar = ilustrasi SVG dari scripts/generate-mock-art.mjs, bukan foto produk.
+ * Gambar = foto hasil AI generate (public/images/dummy), bukan foto produk asli.
  * Ganti dengan data asli Fleece Hearts saat sudah dikirim klien.
  */
 import type { Category, Collection, Product, ProductVariant, SizeGuide } from "@fh/types";
@@ -86,16 +86,25 @@ function variants(
   }));
 }
 
-const VIEW_LABELS = ["tampak depan", "tampak belakang", "detail"];
+/**
+ * Foto dummy hasil AI (public/images/dummy). Foto pertama = packshot, sisanya foto lookbook.
+ * ⚠️ Bukan foto produk asli — ganti saat foto Fleece Hearts sudah ada.
+ */
+const LOOKS: Record<string, { file: string; alt: string }> = {
+  steps: { file: "look-hoodie-steps", alt: "Model memakai hoodie hitam dan sweatpants oat di tangga" },
+  rooftop: { file: "look-rooftop", alt: "Dua model memakai crewneck hijau dan kaos putih di rooftop" },
+  heroModel: { file: "hero-model", alt: "Model memakai polar fleece kuning di depan dinding pasir" },
+  detailFleece: { file: "detail-fleece", alt: "Detail bahan polar fleece kuning dan resleting hitam" },
+  campaign: { file: "campaign-wide", alt: "Dua model memakai polar fleece hitam dan kuning" },
+};
 
-function images(slug: string, name: string) {
-  return VIEW_LABELS.map((label, i) => ({
+function images(slug: string, name: string, looks: (keyof typeof LOOKS)[] = []) {
+  const packshot = { file: slug, alt: `${name}, tampak depan` };
+  return [packshot, ...looks.map((k) => LOOKS[k]!)].map((img, i) => ({
     id: `${slug}_img${i + 1}`,
-    url: `/mock/products/${slug}-${i + 1}.svg`,
-    alt: `${name}, ${label} (ilustrasi)`,
+    url: `/images/dummy/${img.file}.jpg`,
+    alt: img.alt,
     position: i,
-    width: 800,
-    height: 1000,
   }));
 }
 
@@ -118,6 +127,7 @@ type Seed = {
   sizeGuideId?: string;
   dropId?: string;
   featured?: boolean;
+  looks?: (keyof typeof LOOKS)[];
   weightGram: number;
   createdAt: string;
 };
@@ -132,51 +142,51 @@ const CARE_TEE = ["Cuci dengan air dingin", "Jangan pakai pemutih", "Setrika bag
 
 const seeds: Seed[] = [
   {
-    id: "p_001", slug: "everyday-hoodie-black", sku: "FH-HD01-BLK", name: "Everyday Hoodie", colorway: "Black", colorHex: "#1C1C1C",
+    id: "p_001", slug: "everyday-hoodie-black", sku: "FH-HD01-BLK", looks: ["steps"], name: "Everyday Hoodie", colorway: "Black", colorHex: "#1C1C1C",
     price: 389000, categoryId: "cat_hoodie", sizeGuideId: "sg_top", featured: true, weightGram: 680, createdAt: "2026-09-20T03:00:00.000Z",
-    description: "Hoodie harian dengan potongan boxy dan bahu turun. Hood dua lapis, saku kanguru, dan logo mark bordir kecil di dada.",
+    description: "Hoodie harian dengan potongan boxy dan bahu turun. Hood dua lapis, saku kanguru, dan rib tebal di manset serta bawah.",
     material: "Cotton fleece 330 gsm (80% katun, 20% poliester), bagian dalam brushed lembut.",
     stock: [6, 14, 11, 4],
   },
   {
     id: "p_002", slug: "everyday-hoodie-oat", sku: "FH-HD01-OAT", name: "Everyday Hoodie", colorway: "Oat", colorHex: "#E9DFCC",
     price: 389000, categoryId: "cat_hoodie", sizeGuideId: "sg_top", weightGram: 680, createdAt: "2026-09-20T03:00:00.000Z",
-    description: "Hoodie harian dengan potongan boxy dan bahu turun. Hood dua lapis, saku kanguru, dan logo mark bordir kecil di dada.",
+    description: "Hoodie harian dengan potongan boxy dan bahu turun. Hood dua lapis, saku kanguru, dan rib tebal di manset serta bawah.",
     material: "Cotton fleece 330 gsm (80% katun, 20% poliester), bagian dalam brushed lembut.",
     stock: [0, 3, 2, 1],
   },
   {
-    id: "p_003", slug: "heart-crewneck-forest", sku: "FH-CR01-FOR", name: "Heart Crewneck", colorway: "Forest", colorHex: "#34493B",
+    id: "p_003", slug: "heart-crewneck-forest", sku: "FH-CR01-FOR", looks: ["rooftop"], name: "Heart Crewneck", colorway: "Forest", colorHex: "#34493B",
     price: 299000, compareAtPrice: 349000, categoryId: "cat_crewneck", sizeGuideId: "sg_top", featured: true, weightGram: 560, createdAt: "2026-09-28T03:00:00.000Z",
-    description: "Crewneck dengan logo mark sablon puff besar di dada. Rib tebal di leher, manset, dan bawah supaya bentuknya tetap rapi.",
+    description: "Crewneck polos dengan rib tebal di leher, manset, dan bawah supaya bentuknya tetap rapi setelah dicuci.",
     material: "Cotton fleece 300 gsm (80% katun, 20% poliester).",
     stock: [5, 9, 9, 6],
   },
   {
-    id: "p_004", slug: "monogram-tee-white", sku: "FH-TS01-WHT", name: "Monogram Tee", colorway: "White", colorHex: "#FBFAF6",
+    id: "p_004", slug: "monogram-tee-white", sku: "FH-TS01-WHT", looks: ["rooftop"], name: "Monogram Tee", colorway: "White", colorHex: "#FBFAF6",
     price: 179000, categoryId: "cat_tee", sizeGuideId: "sg_tee", weightGram: 230, createdAt: "2026-10-02T03:00:00.000Z",
-    description: "Kaos heavyweight dengan leher rib rapat. Logo mark kecil di dada, versi besar di punggung.",
+    description: "Kaos heavyweight dengan leher rib rapat dan bahu turun. Tidak menerawang, tidak melar.",
     material: "Katun combed 24s, 220 gsm.", care: CARE_TEE,
     stock: [18, 25, 20, 12],
   },
   {
     id: "p_005", slug: "monogram-tee-black", sku: "FH-TS01-BLK", name: "Monogram Tee", colorway: "Black", colorHex: "#181818",
     price: 179000, categoryId: "cat_tee", sizeGuideId: "sg_tee", weightGram: 230, createdAt: "2026-10-02T03:00:00.000Z",
-    description: "Kaos heavyweight dengan leher rib rapat. Logo mark kecil di dada, versi besar di punggung.",
+    description: "Kaos heavyweight dengan leher rib rapat dan bahu turun. Tidak menerawang, tidak melar.",
     material: "Katun combed 24s, 220 gsm.", care: CARE_TEE,
     stock: [10, 16, 14, 2],
   },
   {
-    id: "p_006", slug: "polar-fleece-zip-butter", sku: "FH-ZP01-BTR", name: "Polar Fleece Zip", colorway: "Butter", colorHex: "#FFC200",
+    id: "p_006", slug: "polar-fleece-zip-butter", sku: "FH-ZP01-BTR", looks: ["heroModel", "detailFleece"], name: "Polar Fleece Zip", colorway: "Butter", colorHex: "#F2CC45",
     price: 459000, categoryId: "cat_hoodie", collectionIds: ["col_ch01"], sizeGuideId: "sg_top", dropId: "drop_ch01", featured: true, weightGram: 720, createdAt: "2026-10-15T03:00:00.000Z",
-    description: "Jaket polar fleece dengan kerah berdiri dan resleting penuh. Saku dada dengan penutup, logo mark bordir di dada kiri.",
+    description: "Jaket polar fleece dengan kerah berdiri dan resleting penuh. Saku dada beresleting dan dua saku samping.",
     material: "Polar fleece anti-pilling 320 gsm (100% poliester daur ulang).",
     stock: [8, 12, 12, 6],
   },
   {
-    id: "p_007", slug: "polar-fleece-zip-black", sku: "FH-ZP01-BLK", name: "Polar Fleece Zip", colorway: "Black", colorHex: "#1C1C1C",
+    id: "p_007", slug: "polar-fleece-zip-black", sku: "FH-ZP01-BLK", looks: ["campaign"], name: "Polar Fleece Zip", colorway: "Black", colorHex: "#1C1C1C",
     price: 459000, categoryId: "cat_hoodie", collectionIds: ["col_ch01"], sizeGuideId: "sg_top", dropId: "drop_ch01", weightGram: 720, createdAt: "2026-10-15T03:00:00.000Z",
-    description: "Jaket polar fleece dengan kerah berdiri dan resleting penuh. Saku dada dengan penutup, logo mark bordir kuning di dada kiri.",
+    description: "Jaket polar fleece dengan kerah berdiri dan resleting penuh. Saku dada beresleting dan tarikan resleting kuning.",
     material: "Polar fleece anti-pilling 320 gsm (100% poliester daur ulang).",
     stock: [8, 12, 12, 6],
   },
@@ -188,30 +198,30 @@ const seeds: Seed[] = [
     stock: [7, 10, 8, 3],
   },
   {
-    id: "p_009", slug: "lounge-sweatpants-oat", sku: "FH-PT01-OAT", name: "Lounge Sweatpants", colorway: "Oat", colorHex: "#E9DFCC",
+    id: "p_009", slug: "lounge-sweatpants-oat", sku: "FH-PT01-OAT", looks: ["steps"], name: "Lounge Sweatpants", colorway: "Oat", colorHex: "#E9DFCC",
     price: 319000, categoryId: "cat_pants", sizeGuideId: "sg_pants", weightGram: 520, createdAt: "2026-09-25T03:00:00.000Z",
     description: "Celana jogger dengan potongan lurus, pinggang karet dan tali serut. Dua saku samping dan satu saku belakang.",
     material: "Cotton fleece 300 gsm (80% katun, 20% poliester).",
     stock: [4, 6, 5, 2],
   },
   {
-    id: "p_010", slug: "mark-cap-black", sku: "FH-CP01-BLK", name: "Mark Cap", colorway: "Black", colorHex: "#161616",
+    id: "p_010", slug: "mark-cap-black", sku: "FH-CP01-BLK", looks: ["campaign"], name: "Mark Cap", colorway: "Black", colorHex: "#161616",
     price: 149000, categoryId: "cat_head", collectionIds: ["col_ch01"], dropId: "drop_ch01", weightGram: 120, createdAt: "2026-10-15T03:00:00.000Z",
-    description: "Topi 6 panel dengan logo mark bordir timbul di depan. Strap kulit sintetis di belakang, bisa diatur.",
+    description: "Topi 6 panel dengan visor melengkung. Strap di belakang bisa diatur.",
     material: "Katun twill 100%.", care: ["Cuci tangan dengan air dingin", "Jangan dimasukkan mesin pengering"],
     stock: [30], sizes: ["All size"],
   },
   {
-    id: "p_011", slug: "rib-beanie-butter", sku: "FH-BN01-BTR", name: "Rib Beanie", colorway: "Butter", colorHex: "#FFC200",
+    id: "p_011", slug: "rib-beanie-butter", sku: "FH-BN01-BTR", name: "Rib Beanie", colorway: "Butter", colorHex: "#F2CC45",
     price: 129000, categoryId: "cat_head", weightGram: 90, createdAt: "2026-09-18T03:00:00.000Z",
-    description: "Beanie rajut rib dengan lipatan lebar dan label tenun logo mark.",
+    description: "Beanie rajut rib dengan lipatan lebar. Lembut dan tidak gatal.",
     material: "Akrilik lembut 100%.", care: ["Cuci tangan dengan air dingin", "Keringkan mendatar"],
     stock: [0], sizes: ["All size"],
   },
   {
     id: "p_012", slug: "canvas-tote-natural", sku: "FH-TB01-NAT", name: "Canvas Tote", colorway: "Natural", colorHex: "#EDE3D0",
     price: 119000, categoryId: "cat_bag", weightGram: 260, createdAt: "2026-09-10T03:00:00.000Z",
-    description: "Tote kanvas tebal yang muat laptop 14 inci. Logo mark sablon besar di depan, tali panjang untuk dipakai di bahu.",
+    description: "Tote kanvas tebal yang muat laptop 14 inci, dengan tali panjang untuk dipakai di bahu.",
     material: "Kanvas katun 12 oz.", care: ["Cuci tangan dengan air dingin", "Jangan diperas"],
     stock: [22], sizes: ["One size"],
   },
@@ -232,7 +242,7 @@ export const products: Product[] = seeds.map((s) => {
     categoryId: s.categoryId,
     collectionIds: s.collectionIds ?? ["col_core"],
     dropId: s.dropId,
-    images: images(s.slug, fullName),
+    images: images(s.slug, fullName, s.looks),
     variants: variants(s.id, s.sku, s.colorway, s.colorHex, s.stock, s.sizes),
     weightGram: s.weightGram,
     status: "ACTIVE",
