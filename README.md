@@ -44,8 +44,8 @@ pnpm build                 # build semua
    Sekarang `NEXT_PUBLIC_DATA_SOURCE=mock`; di Tahap 4 tinggal tambah adapter `api` tanpa ubah UI.
 2. **Uang = integer rupiah.** Format pakai `formatRupiah` dari `@fh/shared`.
 3. **Status drop dari jam server**, bukan jam device (`getDropStatus`, `DropCountdown`).
-4. **Data dummy ditandai `isDummy: true`** dan nama "Contoh …". Jangan karang data klien —
-   isi asli menunggu klien (lihat checklist di dokumen rencana §6).
+4. **Data dummy ditandai `isDummy: true`**. Nama, harga, spesifikasi, stok, foto AI,
+   dan copy produk saat ini hanya untuk demo; isi asli menunggu klien (lihat dokumen rencana §6).
 5. Order, payment, dan shipment status dipisah (blueprint §7).
 
 ## Aset yang menunggu klien
@@ -54,5 +54,16 @@ pnpm build                 # build semua
 |---|---|---|
 | Logo | `apps/web/public/brand/logo-mark.svg` | ✅ Sudah divektorkan dari logo klien (`logo-source.jpg`) |
 | Font Coolvetica | `apps/web/public/fonts/coolvetica-regular.woff2` | Konfirmasi lisensi web dulu |
-| Foto produk/banner | sementara ilustrasi SVG di `apps/web/public/mock/` (dari `scripts/generate-mock-art.mjs`); nanti Cloudflare R2 | Ganti `url` di mock data, lalu hapus `public/mock` |
+| Foto produk/banner | sementara foto AI di `apps/web/public/images/dummy/`; nanti Cloudflare R2 | Ganti `url` di mock data dengan foto asli |
 | Kontak & sosmed | `apps/web/src/config/site.ts` | Nilai `null` = belum ada |
+
+## Alur demo pembelian
+
+`/shop` mendukung pencarian, kategori, ukuran, stok, dan urutan harga. Pilih varian produk,
+tambahkan ke keranjang, lalu buka `/checkout` untuk alamat, kurir, dan metode pembayaran.
+Setelah pesanan dibuat, tekan **Simulasikan pembayaran berhasil**. Halaman konfirmasi akan
+memperbarui perjalanan pengiriman dalam sekitar 25 detik. `/orders` dapat menemukan kembali
+pesanan dengan nomor order dan email/WhatsApp yang dipakai saat checkout.
+
+Pesanan dan pembayaran demo disimpan di `localStorage` browser yang sama. Tidak ada transaksi
+nyata atau pengiriman data checkout ke backend. Gunakan data kontak contoh saat mencoba demo.

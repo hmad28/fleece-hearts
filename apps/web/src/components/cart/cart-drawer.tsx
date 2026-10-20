@@ -43,23 +43,24 @@ function useCartLines() {
           imageUrl: p.images[0]?.url ?? null,
           unitPrice,
           lineTotal: unitPrice * item.quantity,
-          available: v.available,
+          available: p.status === "ACTIVE" && v.status === "ACTIVE" ? v.available : 0,
         },
       ];
     });
   }, [items, products]);
 
   const subtotal = lines.reduce((s, l) => s + l.lineTotal, 0);
-  return { lines, subtotal, isLoading: isLoading && productIds.length > 0, isEmpty: items.length === 0 };
+  return { lines, subtotal, isLoading: isLoading && productIds.length > 0, isEmpty: items.length === 0, hasMissing: lines.length !== items.length };
 }
 
 export function CartDrawer() {
+  const items = useCartStore((s) => s.items);
   const isOpen = useCartStore((s) => s.isOpen);
   const close = useCartStore((s) => s.close);
   const setQuantity = useCartStore((s) => s.setQuantity);
   const remove = useCartStore((s) => s.remove);
   const ref = useRef<HTMLDialogElement>(null);
-  const { lines, subtotal, isLoading, isEmpty } = useCartLines();
+  const { lines, subtotal, isLoading, isEmpty, hasMissing } = useCartLines();
 
   // Sinkronkan state store dengan <dialog> native (focus trap + Esc gratis).
   useEffect(() => {
@@ -69,7 +70,7 @@ export function CartDrawer() {
     if (!isOpen && el.open) el.close();
   }, [isOpen]);
 
-  const overStock = lines.some((l) => l.quantity > l.available);
+  const overStock = hasMissing || lines.some((l) => l.quantity > l.available);
 
   return (
     <dialog
@@ -105,6 +106,12 @@ export function CartDrawer() {
           <p className="py-16 text-stone">Memuat keranjang…</p>
         ) : (
           <ul className="divide-y divide-line">
+            {items.filter((item) => !lines.some((line) => line.variantId === item.variantId)).map((item) => (
+              <li key={item.variantId} className="flex items-center justify-between gap-4 py-5 text-sm">
+                <span>Produk ini tidak lagi tersedia.</span>
+                <button type="button" onClick={() => remove(item.variantId)} className="underline">Hapus</button>
+              </li>
+            ))}
             {lines.map((l) => (
               <li key={l.variantId} className="flex gap-4 py-5">
                 <Link href={`/products/${l.productSlug}`} onClick={close} className="w-20 shrink-0">
@@ -164,10 +171,11 @@ export function CartDrawer() {
       {!isEmpty && !isLoading && (
         <div className="shrink-0 border-t border-line px-5 pt-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
           <div className="flex items-baseline justify-between">
-            <span>Subtotal</span>
+            <span>Total sementara</span>
             <span className="tabular text-lg">{formatRupiah(subtotal)}</span>
           </div>
           <p className="mt-1 text-sm text-stone">Ongkir dihitung di checkout.</p>
+          {hasMissing && <p role="alert" className="mt-2 text-sm text-danger">Ada produk yang tidak lagi tersedia. Hapus item tersebut dari keranjang.</p>}
           <ButtonLink
             href="/checkout"
             onClick={close}

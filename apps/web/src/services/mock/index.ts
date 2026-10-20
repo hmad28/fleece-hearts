@@ -12,7 +12,7 @@ export function createMockServices(): Services {
   return {
     catalog,
     drops: new MockDropService(catalog),
-    orders: new MockOrderService(catalog, payment, shipping),
+    orders: new MockOrderService(catalog, payment, shipping, new MockDropService(catalog)),
     payment,
     shipping,
   };

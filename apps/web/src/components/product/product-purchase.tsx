@@ -72,8 +72,8 @@ export function ProductPurchase({ product, lockedLabel }: ProductPurchaseProps) 
             })}
           </div>
           <p className="mt-2 min-h-5 text-sm text-stone" aria-live="polite">
-            {selected && selected.available <= LOW_STOCK_THRESHOLD && selected.available > 0
-              ? `Sisa ${selected.available}`
+            {selected && selected.available > 0
+              ? selected.available <= LOW_STOCK_THRESHOLD ? `Sisa ${selected.available}` : `Tersedia ${selected.available}`
               : ""}
           </p>
         </fieldset>

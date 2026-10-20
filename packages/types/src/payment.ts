@@ -54,4 +54,6 @@ export interface PaymentProvider {
   listMethods(): Promise<PaymentMethod[]>;
   createPayment(input: CreatePaymentInput): Promise<Payment>;
   getPaymentStatus(paymentId: ID): Promise<Payment>;
+  /** Hanya tersedia di mode demo; provider asli tidak memerlukan aksi ini. */
+  simulatePayment?(paymentId: ID): Promise<Payment>;
 }

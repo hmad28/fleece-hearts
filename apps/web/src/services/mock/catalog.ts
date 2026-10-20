@@ -10,6 +10,14 @@ export class MockCatalogService implements CatalogService {
     const { page = 1, perPage = 24 } = query;
     let list = products.filter((p) => p.status === "ACTIVE");
 
+    if (query.search?.trim()) {
+      const needle = query.search.trim().toLocaleLowerCase("id-ID");
+      list = list.filter((p) =>
+        [p.name, p.colorway, p.description, ...p.variants.map((v) => v.sku)]
+          .some((value) => value?.toLocaleLowerCase("id-ID").includes(needle)),
+      );
+    }
+
     if (query.categorySlug) {
       const cat = categories.find((c) => c.slug === query.categorySlug);
       list = cat ? list.filter((p) => p.categoryId === cat.id) : [];
@@ -18,7 +26,7 @@ export class MockCatalogService implements CatalogService {
       list = list.filter((p) => p.dropId === `drop_${query.dropSlug}`);
     }
     if (query.size) {
-      list = list.filter((p) => p.variants.some((v) => v.size === query.size && v.available > 0));
+      list = list.filter((p) => p.variants.some((v) => v.size === query.size && v.status === "ACTIVE" && v.available > 0));
     }
     if (query.availableOnly) {
       list = list.filter((p) => getProductStockStatus(p) !== "OUT_OF_STOCK");

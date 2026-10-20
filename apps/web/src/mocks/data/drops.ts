@@ -3,18 +3,10 @@
  */
 import type { Drop } from "@fh/types";
 
-/**
- * Jadwal rilis contoh: 3 hari dari sekarang, jam 19.00 WIB (12.00 UTC).
- * Dihitung saat dipanggil supaya countdown di demo selalu jalan.
- */
-function nextReleaseAt(now: Date): string {
-  const d = new Date(now);
-  d.setUTCDate(d.getUTCDate() + 3);
-  d.setUTCHours(12, 0, 0, 0);
-  return d.toISOString();
-}
+/** Jadwal tetap agar status drop tidak bergeser pada setiap request. */
+const DEMO_RELEASE_AT = "2026-10-21T12:00:00.000Z";
 
-export function getMockDrops(now: Date): Drop[] {
+export function getMockDrops(_now: Date): Drop[] {
   return [
     {
       id: "drop_ch01",
@@ -25,7 +17,7 @@ export function getMockDrops(now: Date): Drop[] {
       description:
         "Chapter pertama Fleece Hearts: jaket polar fleece berkerah tinggi dalam warna Butter dan Black, plus Mark Cap. Stok terbatas, tidak ada restock untuk warna ini.",
       banner: { id: "drop_ch01_banner", url: "/images/dummy/campaign-wide.jpg", alt: "Dua model memakai polar fleece hitam dan kuning di depan dinding pasir", width: 1376, height: 768 },
-      releaseAt: nextReleaseAt(now),
+      releaseAt: DEMO_RELEASE_AT,
       productIds: ["p_006", "p_007", "p_010"],
       isDummy: true,
     },

@@ -79,6 +79,7 @@ export interface Product extends DummyFlag {
 }
 
 export interface ProductListQuery {
+  search?: string;
   categorySlug?: string;
   collectionSlug?: string;
   dropSlug?: string;

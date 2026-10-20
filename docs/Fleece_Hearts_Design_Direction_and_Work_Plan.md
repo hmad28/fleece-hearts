@@ -148,19 +148,19 @@ Estimasi kasar, asumsi 1 developer utama. Dikonfirmasi ulang setelah data klien 
 - [ ] Deploy preview ke Vercel
 
 ### Tahap 1 — Storefront (MVP)
-- [ ] Layout: header, announcement bar, footer, cart drawer
-- [ ] Homepage + countdown drop
-- [ ] Shop + filter
-- [ ] Product detail + variant selector + size guide
-- [ ] Drop page
+- [x] Layout: header, announcement bar, footer, cart drawer
+- [x] Homepage + countdown drop
+- [x] Shop + pencarian/filter
+- [x] Product detail + variant selector + size guide
+- [x] Drop page
 - [ ] Halaman statis
 - **Milestone:** demo storefront ke klien (pakai foto asli kalau sudah ada)
 
 ### Tahap 2 — Checkout Flow (mock)
-- [ ] Cart (Zustand, persist)
-- [ ] Checkout guest: form alamat (provinsi/kota/kecamatan), pilih kurir mock (JNE/J&T/SiCepat dll), pilih metode bayar mock (VA, QRIS, e-wallet)
-- [ ] Simulasi status pembayaran (pending → paid / expired)
-- [ ] Order success + cek order + tracking mock
+- [x] Cart (Zustand, persist)
+- [x] Checkout guest: form alamat (provinsi/kota/kecamatan), pilih kurir mock (JNE/J&T/SiCepat dll), pilih metode bayar mock (VA, QRIS, e-wallet)
+- [x] Simulasi status pembayaran (pending → paid / expired)
+- [x] Order success + cek order + tracking mock di browser yang sama
 - **Milestone:** klien bisa coba alur beli end-to-end
 
 ### Tahap 3 — Admin MVP (frontend + mock)

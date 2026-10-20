@@ -49,6 +49,7 @@ export interface Order {
   items: OrderItem[];
   subtotal: Rupiah;
   shippingFee: Rupiah;
+  paymentFee: Rupiah;
   discount: Rupiah;
   total: Rupiah;
   paymentId?: ID;

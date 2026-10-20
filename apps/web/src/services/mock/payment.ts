@@ -4,18 +4,31 @@ import { delay, mockId } from "./delay";
 
 /** Batas waktu bayar simulasi. */
 const EXPIRY_MINUTES = 15;
+const STORAGE_KEY = "fh-demo-payments-v1";
 
 /**
  * Simulasi payment gateway.
- * - Pembayaran otomatis jadi PAID setelah `autoPayAfterMs` (demo alur sukses).
- * - Nominal berakhiran 13 rupiah → FAILED (untuk uji alur gagal).
- * - Lewat batas waktu → EXPIRED.
+ * - Pembeli menekan tombol simulasi untuk mengubah PENDING → PAID.
+ * - Pembayaran melewati batas waktu menjadi EXPIRED.
  * Nanti diganti MidtransPaymentProvider / XenditPaymentProvider DI BACKEND.
  */
 export class MockPaymentProvider implements PaymentProvider {
-  private readonly payments = new Map<ID, Payment>();
+  private read(paymentId: ID): Payment | undefined {
+    if (typeof window === "undefined") return undefined;
+    try {
+      const values = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}") as Record<ID, Payment>;
+      return values[paymentId];
+    } catch {
+      return undefined;
+    }
+  }
 
-  constructor(private readonly autoPayAfterMs = 8000) {}
+  private save(payment: Payment) {
+    if (typeof window === "undefined") return;
+    let values: Record<ID, Payment> = {};
+    try { values = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}"); } catch { /* storage lama rusak */ }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...values, [payment.id]: payment }));
+  }
 
   async listMethods(): Promise<PaymentMethod[]> {
     await delay(150);
@@ -43,29 +56,27 @@ export class MockPaymentProvider implements PaymentProvider {
       expiresAt: new Date(now.getTime() + EXPIRY_MINUTES * 60_000).toISOString(),
       createdAt: now.toISOString(),
     };
-    this.payments.set(payment.id, payment);
+    this.save(payment);
     return payment;
   }
 
   async getPaymentStatus(paymentId: ID): Promise<Payment> {
     await delay(200);
-    const payment = this.payments.get(paymentId);
+    const payment = this.read(paymentId);
     if (!payment) throw new Error(`Payment tidak ditemukan: ${paymentId}`);
     if (payment.status !== "PENDING") return payment;
+    const next: Payment = Date.now() >= new Date(payment.expiresAt).getTime()
+      ? { ...payment, status: "EXPIRED" }
+      : payment;
+    this.save(next);
+    return next;
+  }
 
-    const now = Date.now();
-    const age = now - new Date(payment.createdAt).getTime();
-    let next: Payment = payment;
-
-    if (now >= new Date(payment.expiresAt).getTime()) {
-      next = { ...payment, status: "EXPIRED" };
-    } else if (payment.amount % 100 === 13) {
-      next = { ...payment, status: "FAILED" };
-    } else if (age >= this.autoPayAfterMs) {
-      next = { ...payment, status: "PAID", paidAt: new Date(now).toISOString() };
-    }
-
-    this.payments.set(paymentId, next);
+  async simulatePayment(paymentId: ID): Promise<Payment> {
+    const payment = await this.getPaymentStatus(paymentId);
+    if (payment.status !== "PENDING") throw new Error("Pembayaran sudah selesai atau kedaluwarsa");
+    const next: Payment = { ...payment, status: "PAID", paidAt: new Date().toISOString() };
+    this.save(next);
     return next;
   }
 }

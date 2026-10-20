@@ -10,17 +10,7 @@
  * - Maksimal satu blok kuning per layar.
  */
 
-/*
- * Coolvetica — taruh file di apps/web/public/fonts/ setelah lisensi web dikonfirmasi.
- * Kalau file belum ada, heading otomatis fallback ke Helvetica Neue / Arial.
- */
-@font-face {
-  font-family: "Coolvetica";
-  src: url("/fonts/coolvetica-regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+/* Coolvetica dapat ditambahkan setelah file dan lisensi web dikonfirmasi. */
 
 @theme {
   /* Diambil dari logo: hitam pekat di atas pasir. Kuning = aksen drop. */

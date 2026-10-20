@@ -23,6 +23,7 @@ function one(v: string | string[] | undefined) {
 
 export default async function ShopPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const sp = await searchParams;
+  const search = one(sp.q)?.trim().slice(0, 100) ?? "";
   const category = one(sp.category);
   const size = one(sp.size);
   const available = one(sp.available) === "1";
@@ -32,7 +33,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   const [categories, all, result, { lockedByProduct }] = await Promise.all([
     services.catalog.listCategories(),
     services.catalog.listProducts({ perPage: 1000 }),
-    services.catalog.listProducts({ categorySlug: category, size, availableOnly: available, sort, perPage: 48 }),
+    services.catalog.listProducts({ search, categorySlug: category, size, availableOnly: available, sort, perPage: 48 }),
     getDropContext(),
   ]);
 
@@ -42,17 +43,27 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   /** Bangun URL filter dengan mempertahankan filter lain. */
   const href = (patch: Record<string, string | undefined>) => {
     const next = new URLSearchParams();
-    const merged = { category, size, available: available ? "1" : undefined, sort: sort === "newest" ? undefined : sort, ...patch };
+    const merged = { q: search, category, size, available: available ? "1" : undefined, sort: sort === "newest" ? undefined : sort, ...patch };
     for (const [k, v] of Object.entries(merged)) if (v) next.set(k, v);
     const qs = next.toString();
     return qs ? `/shop?${qs}` : "/shop";
   };
 
-  const hasFilter = Boolean(category || size || available);
+  const hasFilter = Boolean(search || category || size || available);
 
   return (
     <div className="mx-auto max-w-[90rem] px-4 pt-10 md:px-8 md:pt-16">
       <h1 className="font-display text-[clamp(3rem,10vw,7rem)]">{activeCategory?.name ?? "Shop"}</h1>
+
+      <form action="/shop" className="mt-8 flex max-w-xl gap-2" role="search">
+        <label htmlFor="shop-search" className="sr-only">Cari produk</label>
+        <input id="shop-search" name="q" type="search" defaultValue={search} placeholder="Cari nama produk atau warna" className="h-12 min-w-0 flex-1 rounded-full border border-line bg-paper px-5 outline-none focus:border-ink" />
+        {category && <input type="hidden" name="category" value={category} />}
+        {size && <input type="hidden" name="size" value={size} />}
+        {available && <input type="hidden" name="available" value="1" />}
+        {sort !== "newest" && <input type="hidden" name="sort" value={sort} />}
+        <button type="submit" className="h-12 rounded-full bg-ink px-6 text-paper">Cari</button>
+      </form>
 
       <div className="sticky top-16 z-30 -mx-4 mt-8 border-y border-line bg-paper/95 px-4 py-3 backdrop-blur md:-mx-8 md:px-8">
         <nav aria-label="Kategori" className="-mx-1 flex gap-1 overflow-x-auto pb-1">
@@ -89,7 +100,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
       </div>
 
       <p className="mt-6 text-sm text-stone" aria-live="polite">
-        {result.total} produk
+        {result.total} produk{search ? ` untuk “${search}”` : ""}
       </p>
 
       <div className="mt-4">
