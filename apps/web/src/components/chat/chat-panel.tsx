@@ -4,9 +4,9 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 
 type Message = { id: number; sender_role: "ADMIN" | "CUSTOMER"; body: string; created_at: string };
 
-export function ChatPanel({ endpoint, role }: { endpoint: string; role: "ADMIN" | "CUSTOMER" }) {
+export function ChatPanel({ endpoint, role, initialMessage = "" }: { endpoint: string; role: "ADMIN" | "CUSTOMER"; initialMessage?: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [body, setBody] = useState("");
+  const [body, setBody] = useState(initialMessage);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const load = useCallback(async () => {

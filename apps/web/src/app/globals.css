@@ -94,3 +94,13 @@
 @utility tabular {
   font-variant-numeric: tabular-nums;
 }
+
+/* Peta OpenStreetMap: tile dibuat netral supaya menyatu dengan palet sand. */
+.fh-map-tiles {
+  filter: grayscale(0.85) sepia(0.18) contrast(0.95) brightness(1.04);
+}
+
+@keyframes fh-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

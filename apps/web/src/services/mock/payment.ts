@@ -50,10 +50,15 @@ export class MockPaymentProvider implements PaymentProvider {
       instructions:
         method.type === "VIRTUAL_ACCOUNT"
           ? { bankName: method.name.replace(" Virtual Account", ""), vaNumber: `8808${Date.now().toString().slice(-10)}` }
-          : method.type === "QRIS"
-            ? { qrString: `MOCK-QRIS-${input.orderNumber}` }
-            : { deeplinkUrl: `#mock-${method.code}` },
-      expiresAt: new Date(now.getTime() + EXPIRY_MINUTES * 60_000).toISOString(),
+          : method.type === "BANK_TRANSFER"
+            ? { bankName: "BCA", accountNumber: "000 000 0000 (DUMMY)", accountName: "Fleece Hearts (contoh)" }
+            : method.type === "QRIS"
+              ? { qrString: `MOCK-QRIS|FLEECEHEARTS|${input.orderNumber}|${input.amount}` }
+              : method.type === "COD"
+                ? { cod: true }
+                : { deeplinkUrl: `#mock-${method.code}` },
+      // COD tidak punya batas bayar online; dibayar saat paket sampai.
+      expiresAt: new Date(now.getTime() + (method.type === "COD" ? 7 * 24 * 60 : EXPIRY_MINUTES) * 60_000).toISOString(),
       createdAt: now.toISOString(),
     };
     this.save(payment);
@@ -68,6 +73,15 @@ export class MockPaymentProvider implements PaymentProvider {
     const next: Payment = Date.now() >= new Date(payment.expiresAt).getTime()
       ? { ...payment, status: "EXPIRED" }
       : payment;
+    this.save(next);
+    return next;
+  }
+
+  /** COD: tandai lunas saat paket diterima. */
+  async settleCod(paymentId: ID, at: string): Promise<Payment | undefined> {
+    const payment = this.read(paymentId);
+    if (!payment || payment.status === "PAID") return payment;
+    const next: Payment = { ...payment, status: "PAID", paidAt: at };
     this.save(next);
     return next;
   }

@@ -4,6 +4,7 @@ import { Wordmark } from "@/components/brand/wordmark";
 import { mainNav } from "@/config/site";
 import { CartButton } from "./cart-button";
 import { MobileMenu } from "./mobile-menu";
+import { SearchButton } from "./search-dialog";
 
 export function SiteHeader() {
   return (
@@ -30,6 +31,7 @@ export function SiteHeader() {
           </ul>
         </nav>
         <div className="flex items-center justify-end gap-0 sm:gap-2 md:col-start-3 md:row-start-1 md:gap-4">
+          <SearchButton />
           <Link href="/account" aria-label="Akun" className="inline-flex size-11 items-center justify-center rounded-full hover:bg-mist md:size-auto md:rounded-sm md:text-sm md:underline-offset-4 md:hover:bg-transparent md:hover:underline">
             <UserRound className="size-5 md:hidden" strokeWidth={1.75} aria-hidden />
             <span className="hidden md:inline">Akun</span>

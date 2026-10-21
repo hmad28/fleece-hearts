@@ -9,7 +9,7 @@ export type PaymentStatus =
   | "REFUNDED"
   | "PARTIALLY_REFUNDED";
 
-export type PaymentMethodType = "VIRTUAL_ACCOUNT" | "QRIS" | "EWALLET";
+export type PaymentMethodType = "VIRTUAL_ACCOUNT" | "BANK_TRANSFER" | "QRIS" | "EWALLET" | "COD";
 
 export interface PaymentMethod {
   code: string;
@@ -32,6 +32,10 @@ export interface PaymentInstructions {
   bankName?: string;
   qrString?: string;
   deeplinkUrl?: string;
+  accountNumber?: string;
+  accountName?: string;
+  /** Bayar di tempat: pembayaran dikonfirmasi saat paket sampai. */
+  cod?: boolean;
 }
 
 export interface Payment {

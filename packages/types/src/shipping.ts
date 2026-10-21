@@ -10,7 +10,9 @@ export type ShipmentStatus =
   | "RETURNED";
 
 export interface ShippingRateInput {
-  destination: { postalCode: string; city: string; district: string };
+  destination: { postalCode: string; city: string; district: string; latitude?: number; longitude?: number };
+  /** Jarak jalan dari toko (km), kalau sudah dihitung di client. */
+  distanceKm?: number;
   weightGram: number;
   itemValue: Rupiah;
 }
@@ -22,6 +24,13 @@ export interface ShippingRate {
   serviceName: string;
   price: Rupiah;
   etdDays: { min: number; max: number };
+  /** Label estimasi yang lebih spesifik, mis. "1–3 jam". */
+  etaLabel?: string;
+  /** Kelompok layanan untuk tampilan. */
+  group?: "REGULER" | "EXPRESS" | "SAME_DAY" | "INSTANT";
+  /** false = tidak tersedia untuk jarak ini (lihat reason). */
+  available?: boolean;
+  reason?: string;
 }
 
 export interface CreateShipmentInput {

@@ -57,6 +57,10 @@ export interface Order {
   courierCode: string;
   courierService: string;
   trackingNumber?: string;
+  /** Jarak jalan toko → tujuan saat checkout (km). */
+  distanceKm?: number;
+  /** Label estimasi layanan kirim yang dipilih. */
+  etaLabel?: string;
   createdAt: ISODateString;
   timeline: OrderEvent[];
 }
@@ -69,6 +73,7 @@ export interface CreateOrderInput {
   courierService: string;
   paymentMethodCode: string;
   voucherCode?: string;
+  distanceKm?: number;
 }
 
 export interface OrderLookupInput {

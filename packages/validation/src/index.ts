@@ -25,8 +25,11 @@ export const addressSchema = z.object({
   city: z.string().trim().min(1, "Kota/Kabupaten wajib diisi"),
   district: z.string().trim().min(1, "Kecamatan wajib diisi"),
   postalCode: z.string().trim().regex(/^\d{5}$/, "Kode pos 5 digit"),
+  village: z.string().trim().max(100).optional(),
   line1: z.string().trim().min(5, "Alamat terlalu pendek").max(300),
   notes: z.string().trim().max(200).optional(),
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
 });
 
 export const cartItemSchema = z.object({
@@ -42,6 +45,7 @@ export const checkoutSchema = z.object({
   courierService: z.string().min(1, "Pilih layanan kurir"),
   paymentMethodCode: z.string().min(1, "Pilih metode pembayaran"),
   voucherCode: z.string().trim().max(50).optional(),
+  distanceKm: z.number().min(0).max(10000).optional(),
 });
 
 export const orderLookupSchema = z.object({

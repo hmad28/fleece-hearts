@@ -12,6 +12,11 @@ export interface Address {
   city: string;
   district: string;
   postalCode: string;
+  /** Kelurahan/desa (opsional, dari data wilayah). */
+  village?: string;
   line1: string;
   notes?: string;
+  /** Koordinat tujuan untuk hitung jarak & peta (opsional). */
+  latitude?: number;
+  longitude?: number;
 }

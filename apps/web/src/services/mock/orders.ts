@@ -1,8 +1,10 @@
-import type { CreateOrderInput, ID, Order, OrderItem, OrderLookupInput, PaymentProvider, ShippingProvider } from "@fh/types";
+import type { CreateOrderInput, ID, Order, OrderItem, OrderLookupInput, ShippingProvider } from "@fh/types";
+import { COD_MAX_KM } from "@/mocks/data/commerce";
 import { checkoutSchema } from "@fh/validation";
 import type { OrderService } from "../contracts";
 import type { MockCatalogService } from "./catalog";
 import type { MockDropService } from "./drops";
+import type { MockPaymentProvider } from "./payment";
 import { delay, mockId } from "./delay";
 
 const STORAGE_KEY = "fh-demo-orders-v1";
@@ -15,7 +17,7 @@ const STORAGE_KEY = "fh-demo-orders-v1";
 export class MockOrderService implements OrderService {
   constructor(
     private readonly catalog: MockCatalogService,
-    private readonly payment: PaymentProvider,
+    private readonly payment: MockPaymentProvider,
     private readonly shipping: ShippingProvider,
     private readonly drops: MockDropService,
   ) {}
@@ -79,18 +81,22 @@ export class MockOrderService implements OrderService {
         postalCode: input.shippingAddress.postalCode,
         city: input.shippingAddress.city,
         district: input.shippingAddress.district,
+        latitude: input.shippingAddress.latitude,
+        longitude: input.shippingAddress.longitude,
       },
+      distanceKm: input.distanceKm,
       weightGram,
       itemValue: subtotal,
     });
     const rate = rates.find((r) => r.courierCode === input.courierCode && r.service === input.courierService);
-    if (!rate) throw new Error("Layanan kurir tidak tersedia");
+    if (!rate || rate.available === false) throw new Error(rate?.reason ?? "Layanan kurir tidak tersedia");
 
     const now = new Date();
     const id = mockId("ord");
     const orderNumber = this.nextOrderNumber(now);
     const method = (await this.payment.listMethods()).find((item) => item.code === input.paymentMethodCode);
     if (!method) throw new Error("Metode pembayaran tidak tersedia");
+    if (method.type === "COD" && (input.distanceKm ?? Infinity) > COD_MAX_KM) throw new Error(`COD hanya untuk tujuan ≤ ${COD_MAX_KM} km dari toko`);
     const total = subtotal + rate.price + method.fee;
 
     const payment = await this.payment.createPayment({
@@ -104,7 +110,7 @@ export class MockOrderService implements OrderService {
     const order: Order = {
       id,
       orderNumber,
-      status: "PENDING",
+      status: method.type === "COD" ? "CONFIRMED" : "PENDING",
       paymentStatus: payment.status,
       shipmentStatus: "PENDING",
       customer: input.customer,
@@ -119,8 +125,15 @@ export class MockOrderService implements OrderService {
       paymentMethodCode: input.paymentMethodCode,
       courierCode: rate.courierCode,
       courierService: rate.service,
+      distanceKm: input.distanceKm,
+      etaLabel: rate.etaLabel,
       createdAt: now.toISOString(),
-      timeline: [{ at: now.toISOString(), type: "ORDER", status: "PENDING", note: "Order dibuat" }],
+      timeline: method.type === "COD"
+        ? [
+            { at: now.toISOString(), type: "ORDER", status: "PENDING", note: "Order dibuat" },
+            { at: now.toISOString(), type: "ORDER", status: "CONFIRMED", note: "COD dikonfirmasi, bayar saat paket sampai" },
+          ]
+        : [{ at: now.toISOString(), type: "ORDER", status: "PENDING", note: "Order dibuat" }],
     };
     await this.save(order);
     return order;
@@ -143,12 +156,17 @@ export class MockOrderService implements OrderService {
     return order ? this.syncPayment(order) : null;
   }
 
-  /** Simulasi efek webhook: payment PAID → order CONFIRMED. */
+  /**
+   * Simulasi efek webhook: payment PAID → order CONFIRMED, lalu status kirim maju otomatis.
+   * COD: alur kirim mulai dari waktu order dibuat; pembayaran lunas saat paket sampai.
+   * Kalau admin sudah mengubah status manual, timeline admin yang dipakai.
+   */
   private async syncPayment(order: Order): Promise<Order> {
     if (!order.paymentId) return order;
-    const payment = await this.payment.getPaymentStatus(order.paymentId);
+    let payment = await this.payment.getPaymentStatus(order.paymentId);
+    const cod = payment.instructions.cod === true;
     let next = order;
-    if (payment.status !== order.paymentStatus) {
+    if (!cod && payment.status !== order.paymentStatus) {
       next = {
         ...order,
         paymentStatus: payment.status,
@@ -157,28 +175,43 @@ export class MockOrderService implements OrderService {
       };
     }
 
-    if (payment.status === "PAID" && payment.paidAt) {
-      const paid = new Date(payment.paidAt).getTime();
-      const elapsed = Date.now() - paid;
+    const startIso = cod ? order.createdAt : payment.status === "PAID" ? payment.paidAt : undefined;
+    if (startIso) {
+      const start = new Date(startIso).getTime();
+      const elapsed = Date.now() - start;
       const steps = [
-        { after: 5_000, type: "ORDER", status: "PROCESSING", orderStatus: "PROCESSING", shipmentStatus: "PENDING" },
-        { after: 10_000, type: "ORDER", status: "PACKED", orderStatus: "PACKED", shipmentStatus: "READY" },
-        { after: 15_000, type: "SHIPMENT", status: "PICKED_UP", orderStatus: "SHIPPED", shipmentStatus: "PICKED_UP" },
-        { after: 20_000, type: "SHIPMENT", status: "IN_TRANSIT", orderStatus: "SHIPPED", shipmentStatus: "IN_TRANSIT" },
-        { after: 25_000, type: "SHIPMENT", status: "DELIVERED", orderStatus: "DELIVERED", shipmentStatus: "DELIVERED" },
+        { after: TRACKING_STEPS_MS.PROCESSING, type: "ORDER", status: "PROCESSING", orderStatus: "PROCESSING", shipmentStatus: "PENDING" },
+        { after: TRACKING_STEPS_MS.PACKED, type: "ORDER", status: "PACKED", orderStatus: "PACKED", shipmentStatus: "READY" },
+        { after: TRACKING_STEPS_MS.PICKED_UP, type: "SHIPMENT", status: "PICKED_UP", orderStatus: "SHIPPED", shipmentStatus: "PICKED_UP" },
+        { after: TRACKING_STEPS_MS.IN_TRANSIT, type: "SHIPMENT", status: "IN_TRANSIT", orderStatus: "SHIPPED", shipmentStatus: "IN_TRANSIT" },
+        { after: TRACKING_STEPS_MS.DELIVERED, type: "SHIPMENT", status: "DELIVERED", orderStatus: "DELIVERED", shipmentStatus: "DELIVERED" },
       ] as const;
       for (const step of steps) {
         if (elapsed < step.after || next.timeline.some((event) => event.status === step.status)) continue;
+        const at = new Date(start + step.after).toISOString();
         next = {
           ...next,
           status: step.orderStatus,
           shipmentStatus: step.shipmentStatus,
-          trackingNumber: step.after >= 15_000 ? `DEMO-${order.orderNumber}` : next.trackingNumber,
-          timeline: [...next.timeline, { at: new Date(paid + step.after).toISOString(), type: step.type, status: step.status }],
+          trackingNumber: step.after >= TRACKING_STEPS_MS.PICKED_UP ? next.trackingNumber ?? `DEMO-${order.orderNumber}` : next.trackingNumber,
+          timeline: [...next.timeline, { at, type: step.type, status: step.status }],
         };
+        if (cod && step.status === "DELIVERED") {
+          payment = (await this.payment.settleCod(payment.id, at)) ?? payment;
+          next = { ...next, paymentStatus: "PAID", timeline: [...next.timeline, { at, type: "PAYMENT", status: "PAID", note: "COD dibayar ke kurir" }] };
+        }
       }
     }
     if (next !== order) await this.save(next);
     return next;
   }
 }
+
+/** Jadwal simulasi status (ms setelah pembayaran berhasil / COD dibuat). */
+export const TRACKING_STEPS_MS = {
+  PROCESSING: 5_000,
+  PACKED: 12_000,
+  PICKED_UP: 20_000,
+  IN_TRANSIT: 28_000,
+  DELIVERED: 88_000,
+} as const;

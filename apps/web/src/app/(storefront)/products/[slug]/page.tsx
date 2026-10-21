@@ -9,6 +9,7 @@ import { ProductPurchase } from "@/components/product/product-purchase";
 import { formatReleaseShortWIB, formatReleaseWIB } from "@/lib/datetime";
 import { getDropContext } from "@/lib/drop-context";
 import { dbCatalog } from "@/lib/storefront-data";
+import { STORE_LOCATION } from "@/config/store-location";
 
 type Params = Promise<{ slug: string }>;
 
@@ -69,7 +70,13 @@ export default async function ProductPage({ params }: { params: Params }) {
               <s className="mr-2 text-stone">{formatRupiah(product.compareAtPrice)}</s>
             )}
             {formatRupiah(product.price)}
+            {product.compareAtPrice && (
+              <span className="ml-3 rounded-full bg-ink px-2.5 py-1 align-middle text-xs text-paper">
+                −{Math.round((1 - product.price / product.compareAtPrice) * 100)}%
+              </span>
+            )}
           </p>
+          <p className="mt-1 text-sm text-stone">Harga sudah termasuk pajak. Ongkir dihitung saat checkout.</p>
 
           {colorways.length > 1 && (
             <div className="mt-6">
@@ -97,9 +104,15 @@ export default async function ProductPage({ params }: { params: Params }) {
           <div className="mt-8">
             <ProductPurchase
               product={product}
+              sizeGuide={sizeGuide}
               lockedLabel={lockedDrop ? `Rilis ${formatReleaseShortWIB(lockedDrop.releaseAt)}` : undefined}
             />
           </div>
+
+          <ul className="mt-8 grid grid-cols-2 gap-3 text-sm">
+            <li className="rounded-xl bg-mist p-3"><span className="block font-medium">Dikirim dari {STORE_LOCATION.short}</span><span className="text-stone">Same Day ≤ 60 km</span></li>
+            <li className="rounded-xl bg-mist p-3"><span className="block font-medium">QRIS, VA, e-wallet</span><span className="text-stone">COD area terdekat</span></li>
+          </ul>
 
           <div className="mt-10 border-t border-line">
             <Detail title="Deskripsi" open>
@@ -145,7 +158,7 @@ export default async function ProductPage({ params }: { params: Params }) {
               </Detail>
             )}
             <Detail title="Pengiriman & retur">
-              <p>Kebijakan pengiriman dan retur menyusul dari Fleece Hearts.</p>
+              <p>Pesanan dikirim dari {STORE_LOCATION.short} (alamat contoh). Ongkir dan estimasi tiba bergantung jarak dan kurir yang dipilih saat checkout. Kebijakan retur final menyusul dari Fleece Hearts.</p>
             </Detail>
           </div>
         </div>
@@ -157,7 +170,7 @@ export default async function ProductPage({ params }: { params: Params }) {
             Mungkin kamu suka
           </h2>
           <div className="mt-8">
-            <ProductGrid products={related} lockedByProduct={lockedByProduct} priorityCount={0} />
+            <ProductGrid products={related} allProducts={all.items} lockedByProduct={lockedByProduct} priorityCount={0} />
           </div>
         </section>
       )}
