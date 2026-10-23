@@ -62,10 +62,9 @@ dibuat saat masuk juga disalin ke Postgres untuk dashboard customer dan admin.
 
 `/admin` berisi ringkasan, produk, mutasi stok, drop, pesanan demo, CMS beranda,
 inbox chat, dan manajemen staf. Email owner awal `fleecehearts@gmail.com` tersimpan
-sebagai undangan di tabel `admin_staff`. Akun email tersebut belum ada di Neon Auth;
-daftarkan lewat `/auth`, lalu kirim dan masukkan kode verifikasi dari `/account` untuk
-mengaktifkan akses admin. Setelah
-masuk, owner dapat menambah owner/admin baru atau mencabut akses lama lewat
+di tabel `admin_staff`. Masuk melalui `/auth` dengan akun Google beremail tersebut;
+akun yang terverifikasi akan ditautkan otomatis dan diarahkan dari `/account` ke
+`/admin`. Owner dapat menambah owner/admin baru atau mencabut akses lama lewat
 `/admin/staff`. Staf baru harus punya akun Neon Auth dengan email terverifikasi.
 `ADMIN_USER_IDS` tetap tersedia untuk allowlist server berdasarkan ID akun yang sudah
 ada, bila diperlukan. ID akun dapat dilihat di Neon SQL Editor:
