@@ -4,6 +4,8 @@ import { getDb } from "@/lib/db";
 
 export interface SiteContent {
   announcement: string;
+  promotionImageUrl: string;
+  promotionEnabled: boolean;
   heroEyebrow: string;
   heroBody: string;
   showLatest: boolean;
@@ -14,6 +16,8 @@ export interface SiteContent {
 
 const defaults: SiteContent = {
   announcement: "",
+  promotionImageUrl: "/images/dummy/campaign-wide.jpg",
+  promotionEnabled: true,
   heroEyebrow: homeCopy.hero.eyebrow,
   heroBody: homeCopy.hero.body,
   showLatest: true,

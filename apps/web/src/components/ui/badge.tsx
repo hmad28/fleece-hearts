@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 const badgeVariants = cva("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium leading-5", {
   variants: {
     tone: {
-      brand: "bg-brand text-ink",
+      brand: "bg-brand text-paper",
       ink: "bg-ink text-paper",
       muted: "bg-mist text-stone",
       outline: "border border-line bg-paper text-ink",

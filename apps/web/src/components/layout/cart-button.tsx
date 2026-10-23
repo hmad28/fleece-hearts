@@ -28,7 +28,7 @@ export function CartButton() {
     >
       <ShoppingBag className="size-5" strokeWidth={1.75} aria-hidden />
       {shown > 0 && (
-        <span className="tabular absolute top-1 right-1 flex min-w-5 items-center justify-center rounded-full bg-brand px-1 text-[11px] leading-5 font-medium text-ink">
+        <span className="tabular absolute top-1 right-1 flex min-w-5 items-center justify-center rounded-full bg-brand px-1 text-[11px] leading-5 font-medium text-paper">
           {shown}
         </span>
       )}

@@ -5,18 +5,18 @@ import { cn } from "@/lib/utils";
 
 /**
  * Tombol berbentuk pill — lembut seperti fleece, senada dengan bentuk huruf Coolvetica.
- * `brand` (kuning) hanya untuk SATU aksi utama per layar.
+ * `brand` (maroon) dipakai untuk aksi utama.
  */
 export const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-colors duration-150 disabled:pointer-events-none disabled:opacity-40",
   {
     variants: {
       variant: {
-        brand: "bg-brand text-ink hover:bg-brand-press",
+        brand: "bg-brand text-paper hover:bg-brand-press",
         ink: "bg-ink text-paper hover:bg-ink/85",
         outline: "border border-ink text-ink hover:bg-ink hover:text-paper",
         ghost: "text-ink hover:bg-mist",
-        onBrand: "bg-ink text-brand hover:bg-ink/85",
+        onBrand: "bg-paper text-brand hover:bg-paper/90",
       },
       size: {
         sm: "h-9 px-4 text-sm",

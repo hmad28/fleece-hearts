@@ -29,7 +29,7 @@ export default async function DropPage({ params }: { params: Params }) {
 
   return (
     <>
-      <section className={upcoming ? "bg-brand text-ink" : "bg-ink text-paper"}>
+      <section className={upcoming ? "bg-brand text-paper" : "bg-ink text-paper"}>
         <div className="mx-auto grid max-w-[90rem] items-center gap-10 px-4 py-12 md:grid-cols-[1fr_1fr] md:px-8 md:py-20">
           <div>
             <div className="flex items-center gap-3">

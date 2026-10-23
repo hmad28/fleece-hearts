@@ -57,7 +57,7 @@ export default async function ProductPage({ params }: { params: Params }) {
           {lockedDrop && (
             <Link
               href={`/drops/${lockedDrop.slug}`}
-              className="mb-4 inline-flex rounded-2xl bg-brand px-3 py-1.5 text-sm leading-snug text-ink"
+              className="mb-4 inline-flex rounded-2xl bg-brand px-3 py-1.5 text-sm leading-snug text-paper"
             >
               Bagian dari {lockedDrop.code} · rilis {formatReleaseWIB(lockedDrop.releaseAt)}
             </Link>

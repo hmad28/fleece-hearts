@@ -115,7 +115,7 @@ export function CartDrawer() {
             {lines.map((l) => (
               <li key={l.variantId} className="flex gap-4 py-5">
                 <Link href={`/products/${l.productSlug}`} onClick={close} className="w-20 shrink-0">
-                  <Media asset={{ url: l.imageUrl, alt: l.productName }} placeholderLabel="" sizes="80px" className="aspect-[4/5] w-20" />
+                  <Media asset={{ url: l.imageUrl, alt: l.productName }} placeholderLabel="" sizes="80px" className="aspect-[4/5] w-20 rounded-lg" />
                 </Link>
                 <div className="flex min-w-0 flex-1 flex-col">
                   <div className="flex items-start justify-between gap-2">

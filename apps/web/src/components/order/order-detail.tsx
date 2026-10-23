@@ -99,7 +99,7 @@ export function OrderDetail({ id, fresh = false }: { id: string; fresh?: boolean
   return <div className="mx-auto max-w-[90rem] px-4 pt-12 md:px-8 md:pt-20">
     <p className="text-sm text-stone">Pembayaran / Konfirmasi / Pengiriman</p>
     {fresh && (order.paymentStatus === "PAID" || cod) && (
-      <div className="mt-5 flex items-start gap-3 rounded-2xl bg-brand p-5 text-ink" role="status">
+      <div className="mt-5 flex items-start gap-3 rounded-2xl bg-brand p-5 text-paper" role="status">
         <CircleCheck className="mt-0.5 size-6 shrink-0" aria-hidden />
         <div><p className="font-semibold">{cod ? "Pesanan COD dibuat." : "Pembayaran diterima."} Terima kasih!</p><p className="text-sm">Konfirmasi pesanan juga dikirim ke {order.customer.email} (simulasi).</p></div>
       </div>
@@ -122,7 +122,7 @@ export function OrderDetail({ id, fresh = false }: { id: string; fresh?: boolean
           <li key={label} className="relative pr-2" aria-current={current ? "step" : undefined}>
             <div className={cn("h-1 rounded-full", done ? "bg-ink" : "bg-line")} />
             <p className={cn("mt-3 flex items-center gap-1.5 text-sm", done ? "text-ink" : "text-stone")}>
-              <span className={cn("inline-flex size-5 items-center justify-center rounded-full text-[10px]", done ? "bg-ink text-brand" : "border border-line")}>{done ? <Check className="size-3" aria-hidden /> : i + 1}</span>
+              <span className={cn("inline-flex size-5 items-center justify-center rounded-full text-[10px]", done ? "bg-brand text-paper" : "border border-line")}>{done ? <Check className="size-3" aria-hidden /> : i + 1}</span>
               {label}
             </p>
             {current && <p className="mt-1 text-xs text-stone">Sekarang</p>}
@@ -168,7 +168,7 @@ export function OrderDetail({ id, fresh = false }: { id: string; fresh?: boolean
 
         <section aria-labelledby="items-heading" className="mt-12">
           <h2 id="items-heading" className="font-display text-3xl">Produk</h2>
-          <ul className="mt-5 divide-y divide-line border-t border-line">{order.items.map((item) => <li key={item.id} className="flex gap-4 py-4"><Media asset={{ url: item.imageUrl, alt: item.productName }} sizes="80px" className="aspect-[4/5] w-20 shrink-0" /><div className="flex-1 text-sm"><p>{item.productName}</p><p className="text-stone">{item.size} · {item.color} · {item.quantity} × {formatRupiah(item.unitPrice)}</p><p className="tabular mt-2">{formatRupiah(item.lineTotal)}</p></div></li>)}</ul>
+          <ul className="mt-5 divide-y divide-line border-t border-line">{order.items.map((item) => <li key={item.id} className="flex gap-4 py-4"><Media asset={{ url: item.imageUrl, alt: item.productName }} sizes="80px" className="aspect-[4/5] w-20 shrink-0 rounded-lg" /><div className="flex-1 text-sm"><p>{item.productName}</p><p className="text-stone">{item.size} · {item.color} · {item.quantity} × {formatRupiah(item.unitPrice)}</p><p className="tabular mt-2">{formatRupiah(item.lineTotal)}</p></div></li>)}</ul>
         </section>
       </div>
 

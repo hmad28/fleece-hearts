@@ -24,7 +24,7 @@ export function LiveStockTag({ product, upcomingDropCode }: { product: Product; 
         : null;
   if (!tag) return null;
   return (
-    <span className={cn("rounded-full px-2.5 py-1 text-xs leading-none", upcomingDropCode ? "bg-brand text-ink" : "bg-paper text-ink")}>
+    <span className={cn("rounded-full px-2.5 py-1 text-xs leading-none", upcomingDropCode ? "bg-brand text-paper" : "bg-paper text-ink")}>
       {tag}
     </span>
   );

@@ -49,12 +49,12 @@ export function NewsletterForm() {
           aria-describedby={state === "error" ? "newsletter-error" : undefined}
           className="h-12 min-w-0 flex-1 rounded-full border border-paper/30 bg-transparent px-5 text-paper placeholder:text-paper/40 focus:border-paper focus:outline-none"
         />
-        <button type="submit" className="h-12 shrink-0 rounded-full bg-brand px-6 font-medium text-ink hover:bg-brand-press">
+        <button type="submit" className="h-12 shrink-0 rounded-full bg-brand px-6 font-medium text-paper hover:bg-brand-press">
           Daftar
         </button>
       </div>
       {state === "error" && (
-        <p id="newsletter-error" className="mt-2 text-sm text-brand">
+        <p id="newsletter-error" className="mt-2 text-sm text-paper">
           Format email belum benar. Contoh: nama@email.com
         </p>
       )}

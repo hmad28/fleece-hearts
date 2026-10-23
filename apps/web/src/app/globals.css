@@ -4,18 +4,15 @@
  * FLEECE HEARTS — design tokens
  * Lihat docs/Fleece_Hearts_Design_Direction_and_Work_Plan.md §2
  *
- * Aturan warna:
- * - Kuning (#FFC200) = background/aksen. JANGAN jadi warna teks di atas putih (kontras ~1.6:1).
- * - Teks di atas kuning selalu pakai ink (kontras ~12:1).
- * - Maksimal satu blok kuning per layar.
+ * Warna brand diperbarui sesuai feedback klien: maroon #8B000B.
+ * Teks di atas brand memakai paper agar tetap terbaca.
  */
 
 /* Coolvetica dapat ditambahkan setelah file dan lisensi web dikonfirmasi. */
 
 @theme {
-  /* Diambil dari logo: hitam pekat di atas pasir. Kuning = aksen drop. */
-  --color-brand: #ffc200;
-  --color-brand-press: #e6ae00;
+  --color-brand: #8b000b;
+  --color-brand-press: #6f0009;
   --color-ink: #000000;
   --color-paper: #f6f3ee;
   --color-sand: #e2d3be;

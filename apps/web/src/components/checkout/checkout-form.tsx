@@ -219,7 +219,10 @@ export function CheckoutForm() {
       <h1 className="font-display mt-3 text-[clamp(3rem,8vw,6rem)]">Checkout</h1>
       <p className="mt-3 text-stone">Simulasi pembelian. Tidak ada pembayaran sungguhan dan tidak meminta data kartu.</p>
       <form onSubmit={submit} className="mt-10 grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.7fr)] lg:gap-20">
-        <div className="space-y-12">
+        <div className="relative min-w-0">
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-10 h-8 bg-gradient-to-b from-paper via-paper/80 to-transparent backdrop-blur-[2px]" />
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-10 bg-gradient-to-t from-paper via-paper/80 to-transparent backdrop-blur-[2px]" />
+          <div tabIndex={0} aria-label="Langkah checkout. Gulir untuk melanjutkan ke bagian berikutnya." className="max-h-[72svh] min-h-[28rem] snap-y snap-proximity space-y-12 overflow-y-auto scroll-smooth pt-8 pr-2 pb-12 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand md:pr-5 lg:max-h-[calc(100svh-7rem)]">
           <Section n={1} id="contact" title="Kontak">
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Nama" value={form.name} onChange={update("name")} autoComplete="name" required />
@@ -317,12 +320,13 @@ export function CheckoutForm() {
               })}
             </div>
           </Section>
+          </div>
         </div>
 
         <aside className="h-fit border-t border-ink pt-5 lg:sticky lg:top-24" aria-label="Tinjau pesanan">
           <h2 className="font-display text-3xl">Tinjau pesanan</h2>
           <ul className="mt-5 divide-y divide-line">
-            {lines.map((line) => <li key={line.variant.id} className="flex gap-4 py-4"><Media asset={line.product.images[0] ?? { url: null, alt: line.product.name }} sizes="72px" className="aspect-[4/5] w-[72px] shrink-0" /><div className="min-w-0 flex-1 text-sm"><p>{line.product.name}{line.product.colorway ? ` – ${line.product.colorway}` : ""}</p><p className="text-stone">{line.variant.size} · {line.quantity} × {formatRupiah(line.price)}</p><p className="tabular mt-2">{formatRupiah(line.total)}</p></div></li>)}
+            {lines.map((line) => <li key={line.variant.id} className="flex gap-4 py-4"><Media asset={line.product.images[0] ?? { url: null, alt: line.product.name }} sizes="72px" className="aspect-[4/5] w-[72px] shrink-0 rounded-lg" /><div className="min-w-0 flex-1 text-sm"><p>{line.product.name}{line.product.colorway ? ` – ${line.product.colorway}` : ""}</p><p className="text-stone">{line.variant.size} · {line.quantity} × {formatRupiah(line.price)}</p><p className="tabular mt-2">{formatRupiah(line.total)}</p></div></li>)}
           </ul>
           <dl className="space-y-2 border-t border-line pt-4 text-sm">
             <Row label="Subtotal produk" value={formatRupiah(subtotal)} />
@@ -350,7 +354,7 @@ export function CheckoutForm() {
 
 function Section({ n, id, title, hint, children }: { n: number; id: string; title: string; hint?: string; children: ReactNode }) {
   return (
-    <section aria-labelledby={`${id}-heading`}>
+    <section aria-labelledby={`${id}-heading`} className="snap-start scroll-mt-8">
       <div className="flex items-baseline gap-3 border-b border-line pb-3">
         <span className="tabular text-sm text-stone">0{n}</span>
         <h2 id={`${id}-heading`} className="font-display text-3xl">{title}</h2>

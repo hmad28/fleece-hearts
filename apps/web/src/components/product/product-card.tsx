@@ -26,7 +26,7 @@ export function ProductCard({ product, upcomingDropCode, swatches = [], priority
 
   return (
     <article className="group relative">
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden rounded-2xl bg-mist md:rounded-3xl">
         <Link href={`/products/${product.slug}`} tabIndex={-1} aria-hidden className="block">
           <Media
             asset={cover}

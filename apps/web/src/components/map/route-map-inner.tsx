@@ -27,8 +27,8 @@ const LOGO_SVG = `<svg viewBox="300 205 1030 1206" width="16" height="18" fill="
 const HOME_SVG = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>`;
 const TRUCK_SVG = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>`;
 
-const storeIcon = pin("#000", "#FFC200", LOGO_SVG);
-const homeIcon = pin("#FFC200", "#000", HOME_SVG);
+const storeIcon = pin("#000", "#fff", LOGO_SVG);
+const homeIcon = pin("#8B000B", "#fff", HOME_SVG);
 const courierIcon = pin("#fff", "#000", TRUCK_SVG);
 
 /** Titik di sepanjang polyline berdasarkan proporsi jarak. */

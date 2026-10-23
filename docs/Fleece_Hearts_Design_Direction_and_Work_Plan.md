@@ -17,8 +17,12 @@
 | Preface | prefacewearhouse.com | Hero carousel full-width, rilis bernama "CH18 – AFTER CLASS", pengumuman jam rilis ("TONIGHT, 7PM WIB"), CTA "SHOP NOW", aksen merah tunggal |
 | Calle de Larache | calledelarache.com | Sangat minimal: logo → 1 banner → "SHOP HERE". Charcoal (#363636) |
 | Dust La Stella | dustlastella.com | Banner → grid produk → "View all" → promo + **countdown timer**. Nama produk format "Produk – Warna", harga Rp. Near-black (#0B0B0B) |
+| Entire Studios | https://www.entirestudios.com/ | Referensi tambahan klien, Oktober 2026: kampanye berbasis foto/video besar, tipografi kuat, teks singkat. |
+| Represent | https://row.representclo.com/ | Referensi tambahan klien, Oktober 2026: katalog dan kategori jelas, produk menonjol, navigasi belanja terstruktur. |
 
 Klien: *"yang buat kayak penjualan gini"* + *"yang penting simple minimalis"*.
+
+Feedback terbaru: warna brand maroon `#8B000B`; popup promosi hanya gambar dan dapat diganti dari CMS; foto produk rounded; galeri produk bisa digeser dengan indikator titik; checkout memiliki gradasi blur di tepi area scroll per bagian.
 
 ### Pola yang sama di ketiganya
 
@@ -36,20 +40,20 @@ Klien: *"yang buat kayak penjualan gini"* + *"yang penting simple minimalis"*.
 ## 2. Design Direction
 
 **Kata kunci:** minimal, editorial, bold, stylish, drop-culture streetwear.
-**Prinsip:** *Foto yang utama, UI diam di belakang. Kuning cuma muncul di momen penting.*
+**Prinsip:** *Foto yang utama, UI diam di belakang. Maroon cuma muncul di momen penting.*
 
 ### 2.1 Warna
 
 | Token | Nilai | Pemakaian |
 |---|---|---|
-| `--brand` | `#FFC200` | CTA utama, badge "NEW DROP", countdown, highlight, focus state |
+| `--brand` | `#8B000B` | CTA utama, badge "NEW DROP", countdown, highlight, focus state |
 | `--ink` | `#0B0B0B` | Teks utama, header, footer, tombol sekunder |
 | `--paper` | `#FFFFFF` / `#FAFAF7` | Background |
 | `--muted` | `#6B6B6B` | Teks sekunder, harga coret |
 | `--line` | `#E6E6E6` | Border, divider |
-| `--danger` | TBD | Sold out / error (jangan pakai kuning) |
+| `--danger` | TBD | Sold out / error |
 
-**Aturan kontras:** `#FFC200` **tidak boleh** dipakai sebagai warna teks di background putih (kontras ~1.6:1, gagal WCAG). Pakai sebagai **background** dengan teks `--ink` di atasnya (kontras ~12:1, aman).
+**Aturan kontras:** Pada blok maroon `#8B000B`, gunakan teks terang `--paper`. Aksen brand di atas latar terang menggunakan maroon sebagai teks atau border.
 
 ### 2.2 Tipografi
 
@@ -64,7 +68,7 @@ Klien: *"yang buat kayak penjualan gini"* + *"yang penting simple minimalis"*.
 - Tombol: kotak / radius kecil, uppercase, full-width di mobile.
 - Header: logo tengah atau kiri, ikon cart + cek order. Menu hamburger di mobile.
 - **Cart drawer** (slide dari kanan), bukan pindah halaman.
-- Spacing lega, whitespace banyak, maksimal 1 aksen kuning per layar.
+- Spacing lega, whitespace banyak, maroon dipakai untuk aksen utama.
 
 ### 2.4 Motion
 
@@ -194,7 +198,7 @@ Fitur "Later" di §4.
 
 **Sudah ada**
 - [x] Nama brand: Fleece Hearts
-- [x] Warna: #FFC200
+- [x] Warna: #8B000B (koreksi klien, Oktober 2026)
 - [x] Font: Helvetica / Coolvetica
 - [x] Domain yang diinginkan: fleeceheart.com
 - [x] Referensi website (§1)

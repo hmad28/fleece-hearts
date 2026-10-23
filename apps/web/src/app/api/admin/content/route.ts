@@ -6,6 +6,8 @@ import { getSiteContent } from "@/lib/site-content";
 
 const schema = z.object({
   announcement: z.string().trim().max(180),
+  promotionImageUrl: z.string().trim().max(2000).refine((value) => value.startsWith("/") && !value.startsWith("//") || /^https:\/\//.test(value), "URL gambar promosi tidak valid"),
+  promotionEnabled: z.boolean(),
   heroEyebrow: z.string().trim().max(100),
   heroBody: z.string().trim().max(500),
   showLatest: z.boolean(), showLookbook: z.boolean(),

@@ -61,7 +61,7 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-20 flex items-center gap-4">
-          <LogoMark className="h-14 w-auto text-brand md:h-20" />
+          <LogoMark className="h-14 w-auto text-paper md:h-20" />
           <p className="font-display text-[clamp(2.5rem,6vw,5rem)]">Fleece Hearts</p>
         </div>
         <p className="mt-8 text-xs text-paper/50">

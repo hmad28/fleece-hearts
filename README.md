@@ -82,6 +82,11 @@ domains Neon Auth. Jalankan migrasi dan seed pada branch Neon deployment sebelum
 merilis aplikasi. Jangan mengaktifkan pembayaran nyata sebelum order, harga, dan
 reservasi stok divalidasi secara transaksional di backend.
 
+CMS `/admin/content` juga mengatur popup promosi berbasis gambar. Gambar contoh
+ditampilkan sekali per tab saat pengunjung pertama kali membuka toko; admin dapat
+mengunggah gambar promosi resmi atau menonaktifkan popup. Warna brand yang berlaku
+adalah maroon `#8B000B` sesuai revisi klien.
+
 ## Aturan penting
 
 1. **Katalog dan drop toko memakai Postgres.** Data awal berasal dari seed dummy; checkout demo tetap lewat adapter mock di `apps/web/src/services`.

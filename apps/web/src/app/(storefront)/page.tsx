@@ -96,8 +96,8 @@ export default async function HomePage() {
         ))}
       </section>}
 
-      {/* DETAIL BAHAN — satu-satunya blok kuning */}
-      {content.showMaterial && <section aria-labelledby="detail-heading" className="bg-brand">
+      {/* Detail bahan memakai warna brand maroon. */}
+      {content.showMaterial && <section aria-labelledby="detail-heading" className="bg-brand text-paper">
         <div className="grid md:grid-cols-2">
           <Media
             asset={{ url: detail.image, alt: detail.imageAlt }}
@@ -109,10 +109,10 @@ export default async function HomePage() {
               {detail.title}
             </h2>
             <p className="mt-6 max-w-md text-lg leading-relaxed">{detail.body}</p>
-            <dl className="mt-10 grid max-w-md grid-cols-[auto_1fr] gap-x-8 gap-y-3 border-t border-ink pt-6 text-sm">
+            <dl className="mt-10 grid max-w-md grid-cols-[auto_1fr] gap-x-8 gap-y-3 border-t border-paper/40 pt-6 text-sm">
               {detail.specs.map((s) => (
                 <div key={s.label} className="contents">
-                  <dt className="text-ink/60">{s.label}</dt>
+                  <dt className="text-paper/70">{s.label}</dt>
                   <dd>{s.value}</dd>
                 </div>
               ))}
