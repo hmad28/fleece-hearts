@@ -19,7 +19,7 @@ export async function getAdminUser() {
     [user.id, email],
   );
   const { rows } = await db.query<{ role: AdminRole }>(
-    `SELECT s.role FROM admin_staff s JOIN neon_auth."user" u ON u.id=s.user_id
+    `SELECT s.role FROM admin_staff s JOIN neon_auth."user" u ON u.id::text=s.user_id
      WHERE s.user_id=$1 AND s.email=$2 AND u."emailVerified"=true`, [user.id, email],
   );
   return rows[0] ? { ...user, adminRole: rows[0].role } : null;
