@@ -23,7 +23,7 @@ export default async function HomePage() {
   const { looks, detail } = homeCopy;
 
   return (
-    <div className="mx-auto w-full max-w-[90rem]">
+    <>
       {/* HERO — foto campaign full-bleed. Desktop: teks di atas dinding kosong sebelah kiri. */}
       {drop && (
         <section aria-labelledby="hero-title" className="relative">
@@ -140,6 +140,6 @@ export default async function HomePage() {
           ))}
         </ul>
       </section>}
-    </div>
+    </>
   );
 }
