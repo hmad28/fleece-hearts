@@ -21,8 +21,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   return <div className="fh-dashboard min-h-dvh bg-[#f6f4f0] font-sans text-[#24201e]">
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-[244px] flex-col bg-[#211d1d] lg:flex">
       <Link href="/admin" className="flex h-[72px] items-center gap-3 border-b border-white/10 px-6">
-        <span className="flex size-8 items-center justify-center bg-brand font-display text-lg text-white">FH</span>
-        <strong className="text-[15px] font-semibold tracking-tight text-white">Fleece Hearts</strong>
+        <span className="flex size-10 items-center justify-center rounded-xl bg-brand font-display text-xl text-white">FH</span>
+        <strong className="text-base font-semibold tracking-tight text-white">Fleece Hearts</strong>
       </Link>
       <div className="flex-1 overflow-y-auto px-3 py-7"><AdminNav role={admin.adminRole} /></div>
       <div className="border-t border-white/10 px-3 py-4"><Link href="/" className="flex h-11 items-center justify-between rounded-md px-4 text-[13px] text-white/60 transition-colors hover:bg-white/[0.06] hover:text-white">Lihat toko <ArrowUpRight className="size-4" /></Link></div>
@@ -30,12 +30,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     <div className="min-w-0 lg:pl-[244px]">
       <header className="sticky top-0 z-20 flex h-[72px] items-center justify-between border-b border-[#e6e1d9] bg-[#fdfcf9]/95 px-4 backdrop-blur sm:px-7 lg:px-9">
         <div className="flex min-w-0 items-center gap-3">
-          <Sheet><SheetTrigger asChild><Button type="button" variant="ghost" size="icon" className="rounded-md lg:hidden" aria-label="Buka navigasi"><Menu className="size-5" /></Button></SheetTrigger><SheetContent side="left" className="w-[270px] border-0 bg-[#211d1d] p-0 text-white"><SheetHeader className="border-b border-white/10 px-6 py-6 text-left"><SheetTitle className="text-white">Fleece Hearts</SheetTitle><SheetDescription className="text-white/50">Admin</SheetDescription></SheetHeader><div className="px-3 py-6"><AdminNav mobile role={admin.adminRole} /></div></SheetContent></Sheet>
+          <Sheet><SheetTrigger asChild><Button type="button" variant="ghost" size="icon" className="rounded-xl lg:hidden" aria-label="Buka navigasi"><Menu className="size-6" /></Button></SheetTrigger><SheetContent side="left" className="w-[270px] border-0 bg-[#211d1d] p-0 text-white"><SheetHeader className="border-b border-white/10 px-6 py-6 text-left"><SheetTitle className="text-white">Fleece Hearts</SheetTitle><SheetDescription className="text-white/50">Admin</SheetDescription></SheetHeader><div className="px-3 py-6"><AdminNav mobile role={admin.adminRole} /></div></SheetContent></Sheet>
           <AdminHeaderTitle />
         </div>
-        <div className="flex items-center gap-4"><span className="hidden max-w-48 truncate text-xs font-medium text-stone sm:block">{admin.email}</span><span className="flex size-8 items-center justify-center rounded-md bg-[#eee4df] text-[10px] font-bold text-brand" aria-hidden>{admin.email.slice(0, 2).toUpperCase()}</span><AdminSignOut /></div>
+        <div className="flex items-center gap-4"><span className="hidden max-w-48 truncate text-sm font-medium text-stone sm:block">{admin.email}</span><span className="flex size-10 items-center justify-center rounded-xl bg-[#eee4df] text-xs font-bold text-brand" aria-hidden>{admin.email.slice(0, 2).toUpperCase()}</span><AdminSignOut /></div>
       </header>
-      <main id="konten" className="mx-auto w-full max-w-[1500px] px-4 pb-16 pt-6 sm:px-7 lg:px-9 lg:pt-8">{children}</main>
+      <main id="konten" className="w-full px-4 pb-16 pt-6 sm:px-7 lg:px-10 lg:pt-9">{children}</main>
     </div>
   </div>;
 }

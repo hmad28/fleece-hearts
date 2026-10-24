@@ -15,5 +15,5 @@ const badgeVariants = cva("inline-flex items-center rounded-full px-2.5 py-0.5 t
 });
 
 export function Badge({ className, tone, ...props }: ComponentProps<"span"> & VariantProps<typeof badgeVariants>) {
-  return <span className={cn(badgeVariants({ tone }), className)} {...props} />;
+  return <span data-slot="badge" className={cn(badgeVariants({ tone }), className)} {...props} />;
 }

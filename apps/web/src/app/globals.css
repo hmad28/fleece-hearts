@@ -119,16 +119,21 @@
   filter: grayscale(0.85) sepia(0.18) contrast(0.95) brightness(1.04);
 }
 
-/* Compact dashboard treatment for the shadcn primitives. */
+/* Dashboard primitives share the softer Fleece Hearts shape language. */
 .fh-dashboard [data-slot="card"] {
-  border-radius: 0;
-  box-shadow: none;
-  gap: 0;
+  border-radius: 1.5rem;
+  box-shadow: 0 14px 36px -32px rgb(62 31 30 / 0.3);
+  gap: 1rem;
   border-color: #e6e1d9;
 }
 
 .fh-dashboard [data-slot="card-header"] {
   border-bottom: 1px solid #e6e1d9;
+}
+
+.fh-dashboard [data-slot="card-title"] {
+  font-size: 1.125rem;
+  line-height: 1.35;
 }
 
 .fh-dashboard [data-slot="card-description"] {
@@ -137,14 +142,51 @@
 
 .fh-dashboard [data-slot="tabs-list"],
 .fh-dashboard [data-slot="tabs-trigger"] {
-  border-radius: 3px;
+  border-radius: 0.75rem;
+}
+
+.fh-dashboard [data-slot="tabs-list"] {
+  min-height: 2.75rem;
+}
+
+.fh-dashboard [data-slot="tabs-trigger"] {
+  padding-inline: 0.9rem;
+  font-size: 0.95rem;
+}
+
+.fh-dashboard [data-slot="table"] {
+  font-size: 1rem;
+}
+
+.fh-dashboard [data-slot="table-head"] {
+  height: 3.25rem;
+  font-size: 0.9rem;
+}
+
+.fh-dashboard [data-slot="table-cell"] {
+  padding-block: 0.875rem;
+}
+
+.fh-dashboard [data-slot="badge"] {
+  font-size: 0.875rem;
+  line-height: 1.5rem;
 }
 
 .fh-dashboard button,
 .fh-dashboard input,
 .fh-dashboard textarea,
 .fh-dashboard select {
-  border-radius: 4px;
+  border-radius: 0.75rem;
+}
+
+.fh-dashboard label {
+  font-size: 0.9rem;
+}
+
+.fh-dashboard [data-slot="input"],
+.fh-dashboard [data-slot="textarea"] {
+  min-height: 2.75rem;
+  font-size: 1rem;
 }
 
 @keyframes fh-fade {

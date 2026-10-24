@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, Boxes, MessageCircle, Package, ShoppingBag } from "lucide-react";
+import { ArrowUpRight, Boxes, Images, MessageCircle, Package, ShoppingBag } from "lucide-react";
 import { getDb } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/admin";
 import { Badge } from "@/components/ui/badge";
@@ -21,16 +21,27 @@ export default async function AdminPage() {
     { label: "Chat", value: conversations.rows[0]?.count ?? "0", href: "/admin/chat", icon: MessageCircle },
   ];
   const actions = [
-    { label: "Produk & stok", href: "/admin/products" },
-    { label: "Pesanan", href: "/admin/orders" },
-    { label: "CMS", href: "/admin/content" },
-    { label: "Chat pelanggan", href: "/admin/chat" },
+    { label: "Produk & stok", href: "/admin/products", icon: Package },
+    { label: "Pesanan", href: "/admin/orders", icon: ShoppingBag },
+    { label: "CMS", href: "/admin/content", icon: Images },
+    { label: "Chat pelanggan", href: "/admin/chat", icon: MessageCircle },
   ];
-  return <div className="space-y-6">
-    <div className="grid grid-cols-2 overflow-hidden border border-[#e6e1d9] bg-white lg:grid-cols-4">{metrics.map((metric, index) => <Link key={metric.label} href={metric.href} className={`group flex min-h-32 flex-col justify-between p-5 transition-colors hover:bg-[#faf7f3] sm:p-6 ${index % 2 === 0 ? "border-r border-[#e6e1d9]" : ""} ${index < 2 ? "border-b border-[#e6e1d9] lg:border-b-0" : ""} ${index === 1 ? "lg:border-r" : ""}`}><div className="flex items-center justify-between"><span className="text-xs font-medium text-stone">{metric.label}</span><metric.icon className="size-4 text-brand" strokeWidth={1.8} /></div><strong className="text-[2.4rem] font-semibold leading-none tracking-[-0.06em] tabular-nums">{metric.value}</strong></Link>)}</div>
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.65fr)_minmax(15rem,0.7fr)]">
-      <section className="min-w-0 border border-[#e6e1d9] bg-white"><div className="flex h-14 items-center justify-between border-b border-[#e6e1d9] px-5"><h2 className="text-sm font-semibold">Pesanan terbaru</h2><Link href="/admin/orders" className="text-xs font-medium text-brand hover:underline">Lihat semua</Link></div><div className="overflow-x-auto"><Table><TableHeader><TableRow className="bg-[#faf9f6]"><TableHead className="pl-5">Pesanan</TableHead><TableHead>Pelanggan</TableHead><TableHead>Status</TableHead><TableHead className="pr-5 text-right">Total</TableHead></TableRow></TableHeader><TableBody>{recentOrders.rows.map(({ data: order }) => <TableRow key={order.id}><TableCell className="pl-5 font-medium">{order.orderNumber}</TableCell><TableCell className="text-stone">{order.customer.name}</TableCell><TableCell><Badge tone="muted">{order.status}</Badge></TableCell><TableCell className="pr-5 text-right font-medium tabular-nums">Rp{order.total.toLocaleString("id-ID")}</TableCell></TableRow>)}</TableBody></Table>{!recentOrders.rows.length && <div className="px-5 py-14 text-center text-sm text-stone">Belum ada pesanan.</div>}</div></section>
-      <section className="h-fit border border-[#e6e1d9] bg-white"><h2 className="flex h-14 items-center border-b border-[#e6e1d9] px-5 text-sm font-semibold">Akses cepat</h2><div>{actions.map((action) => <Link key={action.href} href={action.href} className="flex h-14 items-center justify-between border-b border-[#eee9e2] px-5 text-sm transition-colors last:border-0 hover:bg-[#faf7f3] hover:text-brand">{action.label}<ArrowUpRight className="size-4" strokeWidth={1.7} /></Link>)}</div></section>
-    </div>
+  return <div className="space-y-7">
+    <section aria-label="Ringkasan toko" className="grid w-full overflow-hidden rounded-[28px] border border-[#e8e0d8] bg-white shadow-[0_18px_55px_-45px_rgba(65,30,30,0.38)] sm:grid-cols-2 xl:grid-cols-4">
+      {metrics.map((metric, index) => <Link key={metric.label} href={metric.href} className={`group flex min-h-44 flex-col justify-between gap-8 p-6 transition-colors hover:bg-[#fbf7f4] sm:p-8 ${index < 3 ? "border-b border-[#eee8e0] xl:border-b-0 xl:border-r" : ""} ${index === 0 || index === 2 ? "sm:border-r" : ""} ${index === 1 ? "sm:border-r-0 xl:border-r" : ""} ${index === 2 ? "sm:border-b-0" : ""}`}>
+        <div className="flex items-center justify-between gap-4"><span className="text-base font-medium text-stone">{metric.label}</span><span className="flex size-12 items-center justify-center rounded-2xl bg-[#f5e9e7] text-brand"><metric.icon className="size-6" strokeWidth={1.8} /></span></div>
+        <strong className="text-5xl font-semibold leading-none tracking-[-0.07em] tabular-nums sm:text-6xl">{metric.value}</strong>
+      </Link>)}
+    </section>
+
+    <section className="w-full overflow-hidden rounded-[28px] border border-[#e8e0d8] bg-white shadow-[0_18px_55px_-45px_rgba(65,30,30,0.38)]">
+      <div className="flex min-h-20 items-center justify-between gap-4 border-b border-[#eee8e0] px-6 sm:px-8"><h2 className="text-xl font-semibold tracking-tight">Pesanan terbaru</h2><Link href="/admin/orders" className="inline-flex items-center gap-2 text-base font-medium text-brand hover:underline">Lihat semua <ArrowUpRight className="size-5" /></Link></div>
+      <div className="overflow-x-auto"><Table><TableHeader><TableRow className="bg-[#fbfaf8]"><TableHead className="h-14 pl-6 text-sm sm:pl-8">Pesanan</TableHead><TableHead className="text-sm">Pelanggan</TableHead><TableHead className="text-sm">Status</TableHead><TableHead className="pr-6 text-right text-sm sm:pr-8">Total</TableHead></TableRow></TableHeader><TableBody>{recentOrders.rows.map(({ data: order }) => <TableRow key={order.id} className="h-16"><TableCell className="pl-6 text-base font-semibold sm:pl-8">{order.orderNumber}</TableCell><TableCell className="text-base text-stone">{order.customer.name}</TableCell><TableCell><Badge tone="muted" className="px-3 py-1 text-sm">{order.status}</Badge></TableCell><TableCell className="pr-6 text-right text-base font-semibold tabular-nums sm:pr-8">Rp{order.total.toLocaleString("id-ID")}</TableCell></TableRow>)}</TableBody></Table>{!recentOrders.rows.length && <div className="px-6 py-16 text-center text-base text-stone">Belum ada pesanan.</div>}</div>
+    </section>
+
+    <section className="w-full overflow-hidden rounded-[28px] border border-[#e8e0d8] bg-white shadow-[0_18px_55px_-45px_rgba(65,30,30,0.38)]">
+      <h2 className="flex min-h-20 items-center border-b border-[#eee8e0] px-6 text-xl font-semibold tracking-tight sm:px-8">Akses cepat</h2>
+      <div className="grid sm:grid-cols-2 xl:grid-cols-4">{actions.map((action, index) => <Link key={action.href} href={action.href} className={`group flex min-h-24 items-center gap-4 px-6 text-base font-semibold transition-colors hover:bg-[#fbf7f4] hover:text-brand sm:px-8 ${index < 3 ? "border-b border-[#eee8e0] xl:border-b-0 xl:border-r" : ""} ${index === 0 || index === 2 ? "sm:border-r" : ""} ${index === 1 ? "sm:border-r-0 xl:border-r" : ""} ${index === 2 ? "sm:border-b-0" : ""}`}><action.icon className="size-6 shrink-0 text-brand" strokeWidth={1.8} /><span className="flex-1">{action.label}</span><ArrowUpRight className="size-5 shrink-0 text-stone transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-brand" /></Link>)}</div>
+    </section>
   </div>;
 }
