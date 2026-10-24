@@ -15,5 +15,5 @@ const titles: Record<string, string> = {
 export function AdminHeaderTitle() {
   const pathname = usePathname();
   const title = titles[pathname] ?? (pathname.startsWith("/admin/chat/") ? "Percakapan" : "Dashboard");
-  return <h1 className="truncate text-xl font-semibold tracking-[-0.035em] text-[#24201e] sm:text-2xl">{title}</h1>;
+  return <h1 className="truncate text-[1.2rem] font-semibold tracking-[-0.025em] text-[#24201e] sm:text-[1.35rem]">{title}</h1>;
 }

@@ -51,16 +51,16 @@ export function AuthForm() {
 
   return <div className="mx-auto max-w-md px-4 py-16 md:py-24">
     <p className="text-sm uppercase tracking-widest text-stone">Fleece Hearts</p>
-    <h1 className="font-display mt-3 text-5xl">{mode === "signup" ? "Buat akun" : "Masuk"}</h1>
+    <h1 className="font-display mt-3 text-[2.5rem] sm:text-[3rem]">{mode === "signup" ? "Buat akun" : "Masuk"}</h1>
     <p className="mt-3 text-stone">Simpan alamat agar checkout berikutnya lebih cepat.</p>
     <button type="button" onClick={google} disabled={busy} className="mt-8 flex h-12 w-full items-center justify-center gap-3 rounded-full border border-ink bg-paper px-6 font-medium transition-colors hover:bg-mist disabled:opacity-50">
       <GoogleIcon />{mode === "signup" ? "Daftar dengan Google" : "Masuk dengan Google"}
     </button>
     <div className="mt-6 flex items-center gap-3 text-xs uppercase tracking-widest text-stone"><span className="h-px flex-1 bg-line" />atau dengan email<span className="h-px flex-1 bg-line" /></div>
     <form onSubmit={submit} className="mt-6 space-y-5">
-      {mode === "signup" && <label className="block text-sm">Nama<input autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} required className="mt-1 h-12 w-full rounded-xl border border-line bg-paper px-4" /></label>}
-      <label className="block text-sm">Email<input type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="mt-1 h-12 w-full rounded-xl border border-line bg-paper px-4" /></label>
-      <label className="block text-sm">Password<input type="password" autoComplete={mode === "signup" ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} minLength={8} required className="mt-1 h-12 w-full rounded-xl border border-line bg-paper px-4" /></label>
+      {mode === "signup" && <label className="block text-sm">Nama<input autoComplete="name" placeholder="Nama lengkap Anda" value={name} onChange={(e) => setName(e.target.value)} required className="mt-1 h-12 w-full rounded-xl border border-line bg-paper px-4" /></label>}
+      <label className="block text-sm">Email<input type="email" autoComplete="email" placeholder="nama@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required className="mt-1 h-12 w-full rounded-xl border border-line bg-paper px-4" /></label>
+      <label className="block text-sm">Password<input type="password" autoComplete={mode === "signup" ? "new-password" : "current-password"} placeholder={mode === "signup" ? "Minimal 8 karakter" : "Masukkan password"} value={password} onChange={(e) => setPassword(e.target.value)} minLength={8} required className="mt-1 h-12 w-full rounded-xl border border-line bg-paper px-4" /></label>
       {error && <p role="alert" className="text-sm text-danger">{error}</p>}
       <button type="submit" disabled={busy} className="h-12 w-full rounded-full bg-ink px-6 text-paper disabled:opacity-50">{busy ? "Memproses…" : mode === "signup" ? "Daftar" : "Masuk"}</button>
     </form>

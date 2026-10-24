@@ -100,7 +100,7 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
           onChange={(e) => setQ(e.target.value)}
           placeholder="Cari hoodie, polar fleece, kaos…"
           autoComplete="off"
-          className="h-14 min-w-0 flex-1 bg-transparent text-2xl outline-none placeholder:text-stone/70 md:text-3xl"
+          className="h-14 min-w-0 flex-1 bg-transparent text-[1.35rem] outline-none placeholder:text-stone/70 md:text-[1.6rem]"
         />
         <button type="button" onClick={onClose} className="flex size-11 items-center justify-center rounded-full hover:bg-mist" aria-label="Tutup pencarian">
           <X className="size-5" aria-hidden />

@@ -37,7 +37,7 @@ export function OrderLookup() {
     <p className="mt-4 max-w-xl text-stone">Masukkan nomor order dan email atau WhatsApp yang digunakan saat checkout. Pesanan demo tersimpan di browser ini.</p>
     <form onSubmit={submit} className="mt-10 max-w-lg space-y-5">
       <label className="block text-sm">Nomor order<input value={orderNumber} onChange={(event) => { setOrderNumber(event.target.value); setError(""); }} required placeholder="FH-202610-…" className="mt-2 h-12 w-full rounded-xl border border-line bg-paper px-4 outline-none focus:border-ink" /></label>
-      <label className="block text-sm">Email atau WhatsApp<input value={contact} onChange={(event) => { setContact(event.target.value); setError(""); }} required className="mt-2 h-12 w-full rounded-xl border border-line bg-paper px-4 outline-none focus:border-ink" /></label>
+      <label className="block text-sm">Email atau WhatsApp<input value={contact} placeholder="nama@email.com atau 08xxxxxxxxxx" onChange={(event) => { setContact(event.target.value); setError(""); }} required className="mt-2 h-12 w-full rounded-xl border border-line bg-paper px-4 outline-none focus:border-ink" /></label>
       {error && <p role="alert" className="text-sm text-danger">{error}</p>}
       <Button type="submit" variant="brand" size="lg" disabled={loading}>{loading ? "Mencari…" : "Lihat pesanan"}</Button>
     </form>

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 
 type Message = { id: number; sender_role: "ADMIN" | "CUSTOMER"; body: string; created_at: string };
@@ -37,7 +38,7 @@ export function ChatPanel({ endpoint, role, initialMessage = "" }: { endpoint: s
   return <section className="flex min-h-[520px] flex-col border border-[#e6e1d9] bg-white" aria-label="Percakapan">
     <div className="flex h-12 items-center justify-between border-b border-[#e6e1d9] px-5"><span className="text-xs font-semibold">Pesan</span><span className="text-[11px] text-stone">Diperbarui otomatis</span></div>
     <div className="h-[min(55vh,36rem)] flex-1 space-y-4 overflow-y-auto bg-[#faf9f6] px-4 py-6 sm:px-6" aria-live="polite">
-      {loading && <p className="text-center text-xs text-stone">Memuat...</p>}
+      {loading && <div aria-busy="true" aria-label="Memuat percakapan" className="space-y-4"><Skeleton className="h-16 w-2/3 rounded-2xl" /><Skeleton className="ml-auto h-14 w-1/2 rounded-2xl" /><Skeleton className="h-20 w-3/5 rounded-2xl" /></div>}
       {!loading && messages.length === 0 && <div className="flex h-full items-center justify-center text-sm text-stone">Belum ada pesan.</div>}
       {messages.map((message) => {
         const own = message.sender_role === role;

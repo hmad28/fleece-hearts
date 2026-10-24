@@ -203,7 +203,7 @@ export function CheckoutForm() {
   }
 
   if (!hydrated || (cartItems.length > 0 && productsQuery.isLoading)) {
-    return <div className="mx-auto max-w-[90rem] px-4 py-20 text-stone md:px-8">Memuat checkout…</div>;
+    return <div aria-busy="true" aria-label="Memuat checkout" className="mx-auto max-w-[90rem] animate-pulse space-y-6 px-4 py-12 md:px-8"><div className="h-8 w-44 rounded-xl bg-mist" /><div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.7fr)]"><div className="space-y-5 rounded-2xl bg-white p-6"><div className="h-6 w-32 rounded bg-mist" /><div className="h-12 rounded-xl bg-mist" /><div className="h-12 rounded-xl bg-mist" /><div className="h-40 rounded-xl bg-mist" /></div><div className="h-72 rounded-2xl bg-mist" /></div></div>;
   }
   if (cartItems.length === 0) {
     return <div className="mx-auto min-h-[60svh] max-w-[90rem] px-4 py-20 md:px-8"><h1 className="font-display text-5xl">Keranjang kosong</h1><p className="mt-4">Pilih produk dulu untuk mulai checkout.</p><Link href="/shop" className="mt-6 inline-block underline">Lihat produk</Link></div>;
@@ -225,16 +225,16 @@ export function CheckoutForm() {
           <div tabIndex={0} aria-label="Langkah checkout. Gulir untuk melanjutkan ke bagian berikutnya." className="max-h-[72svh] min-h-[28rem] snap-y snap-proximity space-y-12 overflow-y-auto scroll-smooth pt-8 pr-2 pb-12 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand md:pr-5 lg:max-h-[calc(100svh-7rem)]">
           <Section n={1} id="contact" title="Kontak">
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Nama" value={form.name} onChange={update("name")} autoComplete="name" required />
-              <Field label="Nomor WhatsApp" value={form.phone} onChange={update("phone")} type="tel" autoComplete="tel" required />
-              <div className="sm:col-span-2"><Field label="Email untuk cek order" value={form.email} onChange={update("email")} type="email" autoComplete="email" required /></div>
+              <Field label="Nama" placeholder="Nama lengkap Anda" value={form.name} onChange={update("name")} autoComplete="name" required />
+              <Field label="Nomor WhatsApp" placeholder="08xxxxxxxxxx" value={form.phone} onChange={update("phone")} type="tel" autoComplete="tel" required />
+              <div className="sm:col-span-2"><Field label="Email untuk cek order" placeholder="nama@email.com" value={form.email} onChange={update("email")} type="email" autoComplete="email" required /></div>
             </div>
           </Section>
 
           <Section n={2} id="address" title="Alamat pengiriman" hint="Data wilayah dari API wilayah Indonesia (open data).">
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Nama penerima (kosongkan jika sama)" value={form.recipientName} onChange={update("recipientName")} />
-              <Field label="HP penerima (kosongkan jika sama)" value={form.recipientPhone} onChange={update("recipientPhone")} type="tel" />
+              <Field label="Nama penerima (kosongkan jika sama)" placeholder="Nama penerima paket" value={form.recipientName} onChange={update("recipientName")} />
+              <Field label="HP penerima (kosongkan jika sama)" placeholder="08xxxxxxxxxx" value={form.recipientPhone} onChange={update("recipientPhone")} type="tel" />
               <RegionSelect id="province" label="Provinsi" placeholder="provinsi" queryKey={["wilayah", "prov"]} load={wilayah.provinces}
                 value={region.province} onChange={(province) => setRegion({ ...emptyRegion, province })} />
               <RegionSelect id="regency" label="Kota / kabupaten" placeholder="kota/kabupaten" queryKey={region.province ? ["wilayah", "kab", region.province.id] : null}
@@ -243,8 +243,8 @@ export function CheckoutForm() {
                 load={() => wilayah.districts(region.regency!.id)} value={region.district} onChange={(district) => setRegion((r) => ({ ...r, district, village: null }))} />
               <RegionSelect id="village" label="Kelurahan / desa" placeholder="kelurahan/desa" queryKey={region.district ? ["wilayah", "kel", region.district.id] : null}
                 load={() => wilayah.villages(region.district!.id)} value={region.village} onChange={(village) => setRegion((r) => ({ ...r, village }))} />
-              <Field label="Kode pos" value={form.postalCode} onChange={update("postalCode")} inputMode="numeric" autoComplete="postal-code" required />
-              <div className="sm:col-span-2"><Field label="Alamat lengkap (jalan, nomor, RT/RW)" value={form.line1} onChange={update("line1")} autoComplete="street-address" required /></div>
+              <Field label="Kode pos" placeholder="Contoh: 16820" value={form.postalCode} onChange={update("postalCode")} inputMode="numeric" autoComplete="postal-code" required />
+              <div className="sm:col-span-2"><Field label="Alamat lengkap (jalan, nomor, RT/RW)" placeholder="Jalan, nomor rumah, RT/RW, dan patokan" value={form.line1} onChange={update("line1")} autoComplete="street-address" required /></div>
               <label className="text-sm sm:col-span-2">Catatan pesanan (opsional)
                 <textarea value={form.notes} onChange={(event) => update("notes")(event.target.value)} rows={3} maxLength={200} className="mt-1 w-full rounded-xl border border-line bg-paper p-4 outline-none focus:border-ink" placeholder="Patokan rumah atau instruksi kurir" />
               </label>
@@ -369,6 +369,6 @@ function Row({ label, value, muted }: { label: string; value: string; muted?: bo
   return <div className={cn("flex justify-between gap-4", muted && "text-stone")}><dt>{label}</dt><dd className="tabular text-right">{value}</dd></div>;
 }
 
-function Field({ label, value, onChange, type = "text", inputMode, autoComplete, required = false }: { label: string; value: string; onChange: (value: string) => void; type?: string; inputMode?: "numeric"; autoComplete?: string; required?: boolean }) {
-  return <label className="block text-sm">{label}<input type={type} inputMode={inputMode} autoComplete={autoComplete} value={value} onChange={(event) => onChange(event.target.value)} required={required} className={inputClass} /></label>;
+function Field({ label, placeholder, value, onChange, type = "text", inputMode, autoComplete, required = false }: { label: string; placeholder: string; value: string; onChange: (value: string) => void; type?: string; inputMode?: "numeric"; autoComplete?: string; required?: boolean }) {
+  return <label className="block text-sm">{label}<input type={type} inputMode={inputMode} autoComplete={autoComplete} placeholder={placeholder} value={value} onChange={(event) => onChange(event.target.value)} required={required} className={inputClass} /></label>;
 }
