@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { authClient } from "@/lib/auth/client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Wordmark } from "@/components/brand/wordmark";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 const items = [
@@ -32,13 +33,13 @@ export function AccountShell({ email, children }: { email: string; children: Rea
   const title = pathname === "/account" ? "Dashboard" : pathname === "/account/orders" ? "Pesanan saya" : pathname.startsWith("/account/orders/") ? "Detail pesanan" : "Chat admin";
   async function signOut() { await authClient.signOut(); router.push("/"); router.refresh(); }
   return <div className="fh-dashboard flex h-dvh overflow-hidden bg-[#f6f4f0] text-[#24201e]">
-    <aside className="hidden w-[244px] shrink-0 flex-col bg-[#211d1d] lg:flex">
-      <div className="flex h-[72px] items-center border-b border-white/10 px-6 text-[15px] font-semibold text-white">Akun Fleece Hearts</div>
+    <aside className="hidden w-[244px] shrink-0 flex-col bg-brand lg:flex">
+      <Link href="/account" className="flex h-[72px] items-center border-b border-white/10 px-6 text-white"><Wordmark /></Link>
       <div className="min-h-0 flex-1 overflow-y-auto px-3 py-7"><AccountNav /></div>
       <div className="space-y-3 border-t border-white/10 px-6 py-5"><p className="truncate text-xs text-white/55">{email}</p><Link href="/shop" className="inline-flex items-center gap-2 text-xs text-white/75 hover:text-white">Lihat toko <ArrowUpRight className="size-3.5" /></Link></div>
     </aside>
     <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-      <header className="flex h-[72px] shrink-0 items-center justify-between border-b border-[#e6e1d9] bg-[#fdfcf9] px-4 sm:px-7 lg:px-10"><div className="flex min-w-0 items-center gap-3"><Sheet><SheetTrigger asChild><Button type="button" variant="ghost" size="icon" className="rounded-xl lg:hidden" aria-label="Buka navigasi akun"><Menu className="size-6" /></Button></SheetTrigger><SheetContent side="left" className="w-[270px] border-0 bg-[#211d1d] p-0 text-white"><SheetHeader className="border-b border-white/10 px-6 py-6 text-left"><SheetTitle className="text-white">Akun Fleece Hearts</SheetTitle><SheetDescription className="text-white/50">{email}</SheetDescription></SheetHeader><div className="px-3 py-6"><AccountNav mobile /></div></SheetContent></Sheet><h1 className="truncate text-[1.2rem] font-semibold tracking-[-0.025em] sm:text-[1.35rem]">{title}</h1></div><Button type="button" variant="ghost" size="sm" onClick={() => void signOut()} className="text-stone hover:text-brand"><LogOut className="size-5" /><span className="hidden sm:inline">Keluar</span></Button></header>
+      <header className="flex h-[72px] shrink-0 items-center justify-between border-b border-[#e6e1d9] bg-[#fdfcf9] px-4 sm:px-7 lg:px-10"><div className="flex min-w-0 items-center gap-3"><Sheet><SheetTrigger asChild><Button type="button" variant="ghost" size="icon" className="rounded-xl lg:hidden" aria-label="Buka navigasi akun"><Menu className="size-6" /></Button></SheetTrigger><SheetContent side="left" className="w-[270px] border-0 bg-brand p-0 text-white"><SheetHeader className="border-b border-white/10 px-6 py-6 text-left"><SheetTitle className="text-white"><Wordmark /></SheetTitle><SheetDescription className="text-white/70">{email}</SheetDescription></SheetHeader><div className="px-3 py-6"><AccountNav mobile /></div></SheetContent></Sheet><h1 className="truncate text-[1.2rem] font-semibold tracking-[-0.025em] sm:text-[1.35rem]">{title}</h1></div><Button type="button" variant="ghost" size="sm" onClick={() => void signOut()} className="text-stone hover:text-brand"><LogOut className="size-5" /><span className="hidden sm:inline">Keluar</span></Button></header>
       <div className="min-h-0 w-full flex-1 overflow-y-auto overscroll-contain px-4 pb-16 pt-6 sm:px-7 lg:px-10 lg:pt-9">{children}</div>
     </div>
   </div>;

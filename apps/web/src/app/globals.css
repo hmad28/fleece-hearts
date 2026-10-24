@@ -8,7 +8,7 @@
  * Teks di atas brand memakai paper agar tetap terbaca.
  */
 
-/* Coolvetica dapat ditambahkan setelah file dan lisensi web dikonfirmasi. */
+/* Helvetica dipakai konsisten pada storefront dan dashboard. */
 
 @theme {
   --color-brand: #8b000b;
@@ -22,8 +22,8 @@
   --color-line: #e1dad0;
   --color-danger: #b42318;
 
-  --font-display: "Coolvetica", "Inter Tight Variable", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-sans: "Helvetica Neue", "Inter Tight Variable", Helvetica, Arial, sans-serif;
+  --font-display: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
 
   /* Skala tipe (rasio ~1.333, dibulatkan) */
   --text-xs: 0.75rem;
@@ -103,8 +103,7 @@
 
 @utility font-display {
   font-family: var(--font-display);
-  /* 600 hanya berlaku untuk fallback Inter Tight; Coolvetica cuma punya 1 bobot. */
-  font-weight: 500;
+  font-weight: 600;
   font-synthesis: none;
   letter-spacing: -0.045em;
   line-height: 0.88;

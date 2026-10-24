@@ -21,6 +21,9 @@ const schema = z.object({
     if (!value) return true;
     try { const url = new URL(value); return url.protocol === "https:" && ["tiktok.com", "www.tiktok.com"].includes(url.hostname); } catch { return false; }
   }, "URL TikTok tidak valid"),
+  contactEmail: z.email().max(300).or(z.literal("")).default(""),
+  location: z.string().trim().max(300).default(""),
+  description: z.string().trim().max(500).default(""),
 });
 
 export async function GET() {

@@ -10,7 +10,7 @@ export function SiteFooter({ content }: { content: SiteContent }) {
     content.whatsappNumber && { label: `WhatsApp ${content.whatsappNumber}`, href: `https://wa.me/${content.whatsappNumber.replace(/\D/g, "")}` },
     content.instagramUrl && { label: "Instagram", href: content.instagramUrl },
     content.tiktokUrl && { label: "TikTok", href: content.tiktokUrl },
-    siteConfig.contact.email && { label: siteConfig.contact.email, href: `mailto:${siteConfig.contact.email}` },
+    content.contactEmail && { label: content.contactEmail, href: `mailto:${content.contactEmail}` },
   ].filter((item): item is { label: string; href: string } => Boolean(item));
 
   return (
@@ -48,6 +48,7 @@ export function SiteFooter({ content }: { content: SiteContent }) {
             </ul>
           </nav>
           <div className="text-sm text-paper/70">
+            {content.location && <p className="mb-4 text-paper">{content.location}</p>}
             {contactLinks.length > 0 ? (
               <ul className="space-y-3">
                 {contactLinks.map((item) => (
@@ -64,6 +65,7 @@ export function SiteFooter({ content }: { content: SiteContent }) {
           <LogoMark className="h-14 w-auto text-paper md:h-20" />
           <p className="font-display text-[clamp(2.5rem,6vw,5rem)]">Fleece Hearts</p>
         </div>
+        {content.description && <p className="mt-4 max-w-lg text-sm text-paper/70">{content.description}</p>}
         <p className="mt-8 text-xs text-paper/50">
           © {new Date().getFullYear()} {siteConfig.name}
         </p>

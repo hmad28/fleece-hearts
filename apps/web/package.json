@@ -13,7 +13,6 @@
     "@fh/shared": "workspace:*",
     "@fh/types": "workspace:*",
     "@fh/validation": "workspace:*",
-    "@fontsource-variable/inter-tight": "5.3.0",
     "@hookform/resolvers": "5.9.2",
     "@neondatabase/auth": "0.6.0-beta",
     "@tanstack/react-query": "5.104.4",

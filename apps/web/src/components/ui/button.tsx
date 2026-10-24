@@ -4,7 +4,7 @@ import type { ComponentProps } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Tombol berbentuk pill — lembut seperti fleece, senada dengan bentuk huruf Coolvetica.
+ * Tombol berbentuk pill, konsisten dengan identitas Fleece Hearts.
  * `brand` (maroon) dipakai untuk aksi utama.
  */
 export const buttonVariants = cva(

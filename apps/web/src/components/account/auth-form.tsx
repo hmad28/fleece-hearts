@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { authClient } from "@/lib/auth/client";
+import { Wordmark } from "@/components/brand/wordmark";
 
 export function AuthForm() {
   const router = useRouter();
@@ -50,7 +51,7 @@ export function AuthForm() {
   }
 
   return <div className="mx-auto max-w-md px-4 py-16 md:py-24">
-    <p className="text-sm uppercase tracking-widest text-stone">Fleece Hearts</p>
+    <Wordmark className="text-brand" />
     <h1 className="font-display mt-3 text-[2.5rem] sm:text-[3rem]">{mode === "signup" ? "Buat akun" : "Masuk"}</h1>
     <p className="mt-3 text-stone">Simpan alamat agar checkout berikutnya lebih cepat.</p>
     <button type="button" onClick={google} disabled={busy} className="mt-8 flex h-12 w-full items-center justify-center gap-3 rounded-full border border-ink bg-paper px-6 font-medium transition-colors hover:bg-mist disabled:opacity-50">

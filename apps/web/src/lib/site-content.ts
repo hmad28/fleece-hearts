@@ -16,6 +16,9 @@ export interface SiteContent {
   whatsappNumber: string;
   instagramUrl: string;
   tiktokUrl: string;
+  contactEmail: string;
+  location: string;
+  description: string;
 }
 
 const defaults: SiteContent = {
@@ -31,6 +34,9 @@ const defaults: SiteContent = {
   whatsappNumber: siteConfig.contact.whatsapp ?? "",
   instagramUrl: siteConfig.social.instagram ?? "",
   tiktokUrl: siteConfig.social.tiktok ?? "",
+  contactEmail: siteConfig.contact.email ?? "",
+  location: siteConfig.contact.location ?? "",
+  description: siteConfig.description ?? "",
 };
 
 export async function getSiteContent(): Promise<SiteContent> {

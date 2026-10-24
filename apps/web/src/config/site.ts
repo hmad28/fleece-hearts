@@ -11,7 +11,7 @@ export const siteConfig = {
   description: null as string | null,
   contact: {
     whatsapp: "+62 878-8366-6572" as string | null,
-    email: null as string | null,
+    email: "fleecehearts@gmail.com" as string | null,
     location: null as string | null,
   },
   social: {
