@@ -37,6 +37,28 @@
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* shadcn semantic colors, scoped to the same Fleece Hearts palette. */
+@theme inline {
+  --color-background: var(--color-paper);
+  --color-foreground: var(--color-ink);
+  --color-card: #ffffff;
+  --color-card-foreground: var(--color-ink);
+  --color-popover: #ffffff;
+  --color-popover-foreground: var(--color-ink);
+  --color-primary: var(--color-brand);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--color-mist);
+  --color-secondary-foreground: var(--color-ink);
+  --color-muted: #f1ede7;
+  --color-muted-foreground: var(--color-stone);
+  --color-accent: #f3ebe8;
+  --color-accent-foreground: var(--color-brand);
+  --color-destructive: var(--color-danger);
+  --color-border: var(--color-line);
+  --color-input: #d6cec3;
+  --color-ring: var(--color-brand);
+}
+
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;

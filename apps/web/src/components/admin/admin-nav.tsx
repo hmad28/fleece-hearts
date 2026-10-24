@@ -2,28 +2,43 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowUpRight } from "lucide-react";
+import { Boxes, Images, LayoutDashboard, MessageCircle, Package, ShoppingBag, Users } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { SheetClose } from "@/components/ui/sheet";
 
-const items = [
-  { href: "/admin", label: "Ringkasan", number: "01" },
-  { href: "/admin/products", label: "Produk & stok", number: "02" },
-  { href: "/admin/drops", label: "Drops", number: "03" },
-  { href: "/admin/orders", label: "Pesanan", number: "04" },
-  { href: "/admin/content", label: "Konten situs", number: "05" },
-  { href: "/admin/chat", label: "Inbox chat", number: "06" },
-  { href: "/admin/staff", label: "Staf", number: "07" },
+const groups = [
+  { label: "Workspace", items: [
+    { href: "/admin", label: "Overview", icon: LayoutDashboard },
+    { href: "/admin/orders", label: "Pesanan", icon: ShoppingBag },
+    { href: "/admin/chat", label: "Inbox chat", icon: MessageCircle },
+  ] },
+  { label: "Katalog & konten", items: [
+    { href: "/admin/products", label: "Produk & stok", icon: Package },
+    { href: "/admin/drops", label: "Drops", icon: Boxes },
+    { href: "/admin/content", label: "CMS toko", icon: Images },
+  ] },
+  { label: "Pengaturan", items: [
+    { href: "/admin/staff", label: "Tim & akses", icon: Users },
+  ] },
 ];
 
-export function AdminNav() {
+export function AdminNav({ mobile = false, role }: { mobile?: boolean; role?: string }) {
   const pathname = usePathname();
-  return <nav aria-label="Navigasi admin" className="flex gap-2 overflow-x-auto px-4 pb-4 lg:block lg:space-y-1 lg:overflow-visible lg:px-5 lg:pb-0">
-    {items.map((item) => {
-      const active = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
-      return <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined} className={`group flex min-h-11 shrink-0 items-center gap-3 rounded-lg px-4 py-2.5 text-sm transition-colors lg:w-full ${active ? "bg-brand text-paper" : "text-ink hover:bg-paper"}`}>
-        <span className={`text-[0.65rem] font-semibold tabular tracking-wide ${active ? "text-paper/65" : "text-stone"}`}>{item.number}</span>
-        <span className="font-medium">{item.label}</span>
-        <ArrowUpRight className={`ml-auto size-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 ${active ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`} aria-hidden />
-      </Link>;
+  return <nav aria-label="Navigasi admin" className="space-y-7">
+    {groups.map((group) => {
+      const items = group.items.filter((item) => item.href !== "/admin/staff" || role === "OWNER");
+      if (!items.length) return null;
+      return <div key={group.label}>
+        <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-stone">{group.label}</p>
+        <div className="space-y-1">{items.map((item) => {
+          const active = item.href === "/admin" ? pathname === item.href : pathname.startsWith(item.href);
+          const content = <><item.icon className="size-4 shrink-0" strokeWidth={1.8} aria-hidden /><span>{item.label}</span>{active && <span className="ml-auto size-1.5 rounded-full bg-brand" />}</>;
+          const className = cn("flex min-h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors", active ? "bg-brand/8 text-brand" : "text-ink/75 hover:bg-mist hover:text-ink");
+          return mobile
+            ? <SheetClose asChild key={item.href}><Link href={item.href} aria-current={active ? "page" : undefined} className={className}>{content}</Link></SheetClose>
+            : <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined} className={className}>{content}</Link>;
+        })}</div>
+      </div>;
     })}
   </nav>;
 }

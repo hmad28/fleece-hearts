@@ -1,64 +1,57 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Boxes, MessageCircle, Package, ShoppingBag, TrendingUp } from "lucide-react";
 import { getDb } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/admin";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeading } from "@/components/admin/page-heading";
+import { Badge } from "@/components/ui/badge";
 
 export default async function AdminPage() {
   const admin = await requireAdmin();
-  const dateLabel = new Intl.DateTimeFormat("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Jakarta" }).format(new Date());
   const db = getDb();
-  const [products, orders, conversations, movements] = await Promise.all([
+  const [products, orders, conversations, movements, recentOrders] = await Promise.all([
     db.query<{ count: string; low_stock: string }>(`SELECT count(*)::text AS count, count(*) FILTER (WHERE EXISTS (SELECT 1 FROM jsonb_array_elements(data->'variants') v WHERE (v->>'available')::int < 5))::text AS low_stock FROM catalog_products`),
     db.query<{ count: string }>("SELECT count(*)::text AS count FROM demo_orders"),
     db.query<{ count: string }>("SELECT count(*)::text AS count FROM chat_conversations"),
     db.query<{ count: string }>("SELECT count(*)::text AS count FROM inventory_movements"),
+    db.query<{ data: { id: string; orderNumber: string; customer: { name: string }; status: string; total: number; createdAt: string } }>("SELECT data FROM demo_orders ORDER BY created_at DESC LIMIT 5"),
   ]);
-
   const stats = [
-    { number: "01", label: "Produk di katalog", value: products.rows[0]?.count ?? "0", detail: "Kelola informasi dan varian", href: "/admin/products" },
-    { number: "02", label: "Perlu cek stok", value: products.rows[0]?.low_stock ?? "0", detail: "Produk dengan varian di bawah 5", href: "/admin/products" },
-    { number: "03", label: "Pesanan masuk", value: orders.rows[0]?.count ?? "0", detail: "Pesanan dari simulasi checkout", href: "/admin/orders" },
-    { number: "04", label: "Percakapan", value: conversations.rows[0]?.count ?? "0", detail: "Pesan dari customer", href: "/admin/chat" },
+    { label: "Produk aktif", value: products.rows[0]?.count ?? "0", detail: "Dalam katalog", href: "/admin/products", icon: Package },
+    { label: "Perlu cek stok", value: products.rows[0]?.low_stock ?? "0", detail: "Varian di bawah 5 pcs", href: "/admin/products", icon: Boxes },
+    { label: "Total pesanan", value: orders.rows[0]?.count ?? "0", detail: "Pesanan simulasi", href: "/admin/orders", icon: ShoppingBag },
+    { label: "Percakapan", value: conversations.rows[0]?.count ?? "0", detail: "Masuk ke inbox", href: "/admin/chat", icon: MessageCircle },
   ];
-  const tasks = [
-    { number: "01", title: "Atur produk & stok", description: "Tambah produk, foto, ukuran, dan ketersediaan.", href: "/admin/products" },
-    { number: "02", title: "Periksa pesanan", description: "Lihat pembelian dan perbarui status pengiriman.", href: "/admin/orders" },
-    { number: "03", title: "Ubah tampilan toko", description: "Kelola konten beranda dan gambar promosi.", href: "/admin/content" },
-    { number: "04", title: "Balas pelanggan", description: "Buka pesan yang masuk dari customer.", href: "/admin/chat" },
+  const shortcuts = [
+    { title: "Kelola katalog", description: "Produk, varian, dan stok", href: "/admin/products", icon: Package },
+    { title: "Ubah konten", description: "Beranda dan promosi", href: "/admin/content", icon: TrendingUp },
+    { title: "Lihat inbox", description: "Balas pertanyaan pelanggan", href: "/admin/chat", icon: MessageCircle },
   ];
-
-  return <div className="space-y-10 lg:space-y-12">
-    <section className="relative overflow-hidden rounded-[1.5rem] bg-brand px-6 py-9 text-paper sm:px-10 sm:py-12 lg:px-12">
-      <div className="absolute -right-9 -top-16 select-none font-display text-[16rem] leading-none text-paper/[0.06]" aria-hidden>FH</div>
-      <div className="relative z-10 flex flex-col justify-between gap-10 lg:flex-row lg:items-end">
-        <div>
-          <p className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-paper/70">Fleece Hearts / Control room</p>
-          <h1 className="font-display mt-6 max-w-2xl text-5xl leading-[0.95] sm:text-6xl lg:text-7xl">Kendali toko,<br />di satu tempat.</h1>
-          <p className="mt-6 max-w-lg text-sm leading-relaxed text-paper/75 sm:text-base">Pantau apa yang perlu dikerjakan hari ini, lalu lanjut langsung ke bagian yang dibutuhkan.</p>
-        </div>
-        <div className="border-t border-paper/30 pt-5 text-left lg:min-w-48 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
-          <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-paper/60">Masuk sebagai</p>
-          <p className="mt-2 text-sm font-semibold">{admin.email}</p>
-          <p className="mt-4 text-xs text-paper/60">{dateLabel}</p>
-        </div>
+  return <div>
+    <PageHeading eyebrow="Studio / Overview" title="Selamat datang kembali" description={`Halo, ${admin.email}. Berikut kondisi toko dan pekerjaan yang bisa langsung kamu lanjutkan.`} />
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {stats.map((stat) => <Link key={stat.label} href={stat.href} className="group">
+        <Card className="h-full gap-5 border-line bg-white py-5 shadow-none transition-all hover:-translate-y-0.5 hover:border-brand/30 hover:shadow-md">
+          <CardHeader className="flex flex-row items-center justify-between px-5"><CardDescription className="font-medium">{stat.label}</CardDescription><span className="rounded-lg bg-brand/8 p-2 text-brand"><stat.icon className="size-4" /></span></CardHeader>
+          <CardContent className="px-5"><strong className="text-4xl font-semibold tracking-tight tabular-nums">{stat.value}</strong><p className="mt-1.5 text-xs text-stone">{stat.detail}</p></CardContent>
+        </Card>
+      </Link>)}
+    </div>
+    <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(18rem,0.8fr)]">
+      <Card className="gap-0 border-line bg-white py-0 shadow-none">
+        <CardHeader className="flex flex-row items-center justify-between border-b border-line py-5"><div><CardTitle className="text-base">Pesanan terbaru</CardTitle><CardDescription className="mt-1">Aktivitas pembelian paling baru</CardDescription></div><Link href="/admin/orders" className="inline-flex items-center gap-1 text-xs font-semibold text-brand">Semua pesanan <ArrowUpRight className="size-3.5" /></Link></CardHeader>
+        <CardContent className="px-0">
+          {recentOrders.rows.length ? recentOrders.rows.map(({ data: order }) => <Link href="/admin/orders" key={order.id} className="flex flex-wrap items-center gap-3 border-b border-line px-6 py-4 last:border-b-0 hover:bg-muted/60 sm:flex-nowrap">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-mist text-brand"><ShoppingBag className="size-4" /></span>
+            <span className="min-w-0 flex-1"><strong className="block truncate text-sm">{order.orderNumber}</strong><small className="block truncate text-stone">{order.customer.name}</small></span>
+            <Badge tone="muted">{order.status}</Badge><strong className="min-w-28 text-right text-sm tabular-nums">Rp{order.total.toLocaleString("id-ID")}</strong>
+          </Link>) : <div className="p-10 text-center"><ShoppingBag className="mx-auto size-8 text-stone/50" /><p className="mt-3 text-sm font-medium">Belum ada pesanan</p><p className="mt-1 text-xs text-stone">Pesanan baru akan tampil di sini.</p></div>}
+        </CardContent>
+      </Card>
+      <div className="space-y-6">
+        <Card className="gap-4 border-line bg-white shadow-none"><CardHeader><CardTitle className="text-base">Akses cepat</CardTitle><CardDescription>Lanjutkan pekerjaan utama</CardDescription></CardHeader><CardContent className="space-y-1">{shortcuts.map((item) => <Link key={item.href} href={item.href} className="flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-muted"><span className="rounded-lg bg-brand/8 p-2 text-brand"><item.icon className="size-4" /></span><span className="flex-1"><strong className="block text-sm">{item.title}</strong><small className="text-stone">{item.description}</small></span><ArrowUpRight className="size-4 text-stone" /></Link>)}</CardContent></Card>
+        <Card className="gap-2 border-brand/15 bg-brand/5 shadow-none"><CardHeader><CardTitle className="text-base">Catatan operasional</CardTitle></CardHeader><CardContent className="text-sm leading-6 text-stone"><strong className="text-ink">{movements.rows[0]?.count ?? "0"} mutasi stok</strong> sudah tercatat. Pembayaran dan pengiriman di situs saat ini berjalan dalam mode simulasi.</CardContent></Card>
       </div>
-    </section>
-
-    <section aria-labelledby="store-pulse">
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4"><div><p className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-brand">Hari ini / Ringkasan</p><h2 id="store-pulse" className="font-display mt-3 text-4xl sm:text-5xl">Kondisi toko</h2></div><p className="max-w-xs text-xs leading-relaxed text-stone">Angka pesanan berasal dari simulasi checkout.</p></div>
-      <div className="grid overflow-hidden rounded-2xl border border-line bg-white/55 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map((stat, index) => <Link key={stat.number} href={stat.href} className={`group flex min-h-56 flex-col justify-between p-6 transition-colors hover:bg-mist/70 sm:p-7 ${index < 3 ? "border-b border-line xl:border-b-0 xl:border-r" : ""} ${index === 0 ? "sm:border-r" : ""} ${index === 1 ? "sm:border-r-0 xl:border-r" : ""} ${index === 2 ? "sm:border-r" : ""}`}>
-          <div className="flex justify-between gap-4"><span className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-stone">{stat.number} / {stat.label}</span><ArrowUpRight className="size-4 shrink-0 text-stone transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-brand" aria-hidden /></div>
-          <div><strong className="font-display block text-6xl leading-none tabular sm:text-7xl">{stat.value}</strong><p className="mt-3 text-xs text-stone">{stat.detail}</p></div>
-        </Link>)}
-      </div>
-    </section>
-
-    <section aria-labelledby="quick-actions" className="grid gap-8 border-t border-ink pt-8 lg:grid-cols-[minmax(12rem,0.36fr)_minmax(0,1fr)] lg:gap-12">
-      <div><p className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-brand">Langkah berikutnya</p><h2 id="quick-actions" className="font-display mt-4 text-4xl sm:text-5xl">Mulai dari sini.</h2><p className="mt-5 text-sm leading-relaxed text-stone">{movements.rows[0]?.count ?? "0"} perubahan stok tercatat.</p></div>
-      <div className="border-t border-line">
-        {tasks.map((task) => <Link key={task.href} href={task.href} className="group flex items-center gap-5 border-b border-line py-5 transition-colors hover:text-brand sm:gap-8 sm:py-6"><span className="text-xs font-semibold tabular text-stone">{task.number}</span><span className="min-w-0 flex-1"><strong className="block text-base font-semibold sm:text-lg">{task.title}</strong><span className="mt-1 block text-xs text-stone sm:text-sm">{task.description}</span></span><ArrowRight className="size-4 shrink-0 transition-transform group-hover:translate-x-1" aria-hidden /></Link>)}
-      </div>
-    </section>
+    </div>
   </div>;
 }

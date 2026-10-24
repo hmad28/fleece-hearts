@@ -1,8 +1,9 @@
 import { ContentEditor } from "@/components/admin/content-editor";
 import { getSiteContent } from "@/lib/site-content";
 import { requireAdmin } from "@/lib/auth/admin";
+import { PageHeading } from "@/components/admin/page-heading";
 
 export default async function ContentPage() {
   await requireAdmin();
-  return <><h1 className="font-display text-5xl">Konten beranda</h1><p className="my-5 text-stone">Atur pengumuman, teks hero, dan bagian yang tampil di homepage.</p><ContentEditor initial={await getSiteContent()} /></>;
+  return <><PageHeading eyebrow="Konten / CMS" title="Tampilan toko" description="Atur gambar promosi, teks beranda, dan bagian yang terlihat oleh pengunjung." /><ContentEditor initial={await getSiteContent()} /></>;
 }
