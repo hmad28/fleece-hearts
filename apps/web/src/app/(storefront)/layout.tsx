@@ -35,7 +35,7 @@ export default async function StorefrontLayout({ children }: { children: ReactNo
       </StorefrontChrome>
       <main id="konten">{children}</main>
       <StorefrontChrome>
-        <SiteFooter />
+        <SiteFooter content={content} />
         <CartDrawer />
         <PromotionPopup imageUrl={content.promotionEnabled ? content.promotionImageUrl : null} />
         {isMock && (

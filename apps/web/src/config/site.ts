@@ -4,19 +4,19 @@
  */
 export const siteConfig = {
   name: "Fleece Hearts",
-  domain: "fleeceheart.com",
+  domain: "fleecehearts.com",
   /** Belum ada dari klien. */
   tagline: null as string | null,
   /** Belum ada dari klien. */
   description: null as string | null,
   contact: {
-    whatsapp: null as string | null,
+    whatsapp: "+62 878-8366-6572" as string | null,
     email: null as string | null,
     location: null as string | null,
   },
   social: {
-    instagram: null as string | null,
-    tiktok: null as string | null,
+    instagram: "https://www.instagram.com/fleece.hearts" as string | null,
+    tiktok: "https://www.tiktok.com/@fleece.hearts" as string | null,
   },
   currency: "IDR",
   timezone: "Asia/Jakarta",

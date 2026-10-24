@@ -1,5 +1,6 @@
 import "server-only";
 import { homeCopy } from "@/config/content";
+import { siteConfig } from "@/config/site";
 import { getDb } from "@/lib/db";
 
 export interface SiteContent {
@@ -12,6 +13,9 @@ export interface SiteContent {
   showLookbook: boolean;
   showMaterial: boolean;
   showCategories: boolean;
+  whatsappNumber: string;
+  instagramUrl: string;
+  tiktokUrl: string;
 }
 
 const defaults: SiteContent = {
@@ -24,6 +28,9 @@ const defaults: SiteContent = {
   showLookbook: true,
   showMaterial: true,
   showCategories: true,
+  whatsappNumber: siteConfig.contact.whatsapp ?? "",
+  instagramUrl: siteConfig.social.instagram ?? "",
+  tiktokUrl: siteConfig.social.tiktok ?? "",
 };
 
 export async function getSiteContent(): Promise<SiteContent> {

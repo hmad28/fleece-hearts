@@ -2,16 +2,16 @@ import Link from "next/link";
 import { LogoMark } from "@/components/brand/wordmark";
 import { homeCopy } from "@/config/content";
 import { footerNav, mainNav, siteConfig } from "@/config/site";
+import type { SiteContent } from "@/lib/site-content";
 import { NewsletterForm } from "./newsletter-form";
 
-export function SiteFooter() {
-  const { contact, social } = siteConfig;
-  const contactLines = [
-    contact.whatsapp && `WhatsApp ${contact.whatsapp}`,
-    contact.email,
-    social.instagram && `Instagram ${social.instagram}`,
-    social.tiktok && `TikTok ${social.tiktok}`,
-  ].filter(Boolean) as string[];
+export function SiteFooter({ content }: { content: SiteContent }) {
+  const contactLinks = [
+    content.whatsappNumber && { label: `WhatsApp ${content.whatsappNumber}`, href: `https://wa.me/${content.whatsappNumber.replace(/\D/g, "")}` },
+    content.instagramUrl && { label: "Instagram", href: content.instagramUrl },
+    content.tiktokUrl && { label: "TikTok", href: content.tiktokUrl },
+    siteConfig.contact.email && { label: siteConfig.contact.email, href: `mailto:${siteConfig.contact.email}` },
+  ].filter((item): item is { label: string; href: string } => Boolean(item));
 
   return (
     <footer className="mt-28 bg-ink text-paper md:mt-36">
@@ -48,14 +48,14 @@ export function SiteFooter() {
             </ul>
           </nav>
           <div className="text-sm text-paper/70">
-            {contactLines.length > 0 ? (
+            {contactLinks.length > 0 ? (
               <ul className="space-y-3">
-                {contactLines.map((l) => (
-                  <li key={l}>{l}</li>
+                {contactLinks.map((item) => (
+                  <li key={item.href}><a href={item.href} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-paper">{item.label}</a></li>
                 ))}
               </ul>
             ) : (
-              <p>WhatsApp, Instagram, dan email menyusul.</p>
+              <p>Kontak menyusul.</p>
             )}
           </div>
         </div>

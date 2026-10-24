@@ -12,6 +12,15 @@ const schema = z.object({
   heroBody: z.string().trim().max(500),
   showLatest: z.boolean(), showLookbook: z.boolean(),
   showMaterial: z.boolean(), showCategories: z.boolean(),
+  whatsappNumber: z.string().trim().max(30).refine((value) => value === "" || /^\+?[\d\s()-]{8,30}$/.test(value) && value.replace(/\D/g, "").length >= 10, "Nomor WhatsApp tidak valid"),
+  instagramUrl: z.string().trim().max(300).refine((value) => {
+    if (!value) return true;
+    try { const url = new URL(value); return url.protocol === "https:" && ["instagram.com", "www.instagram.com"].includes(url.hostname); } catch { return false; }
+  }, "URL Instagram tidak valid"),
+  tiktokUrl: z.string().trim().max(300).refine((value) => {
+    if (!value) return true;
+    try { const url = new URL(value); return url.protocol === "https:" && ["tiktok.com", "www.tiktok.com"].includes(url.hostname); } catch { return false; }
+  }, "URL TikTok tidak valid"),
 });
 
 export async function GET() {
