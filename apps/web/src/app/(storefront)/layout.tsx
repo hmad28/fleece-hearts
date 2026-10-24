@@ -4,7 +4,6 @@ import { CartDrawer } from "@/components/cart/cart-drawer";
 import { AnnouncementBar } from "@/components/layout/announcement-bar";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
-import { StorefrontChrome } from "@/components/layout/storefront-chrome";
 import { PromotionPopup } from "@/components/layout/promotion-popup";
 import { formatReleaseWIB } from "@/lib/datetime";
 import { getDropContext } from "@/lib/drop-context";
@@ -29,21 +28,17 @@ export default async function StorefrontLayout({ children }: { children: ReactNo
       >
         Langsung ke konten
       </a>
-      <StorefrontChrome>
-        {announcement && <AnnouncementBar text={announcement} href={next ? `/drops/${next.slug}` : undefined} />}
-        <SiteHeader />
-      </StorefrontChrome>
+      {announcement && <AnnouncementBar text={announcement} href={next ? `/drops/${next.slug}` : undefined} />}
+      <SiteHeader />
       <main id="konten">{children}</main>
-      <StorefrontChrome>
-        <SiteFooter content={content} />
-        <CartDrawer />
-        <PromotionPopup imageUrl={content.promotionEnabled ? content.promotionImageUrl : null} />
-        {isMock && (
+      <SiteFooter content={content} />
+      <CartDrawer />
+      <PromotionPopup imageUrl={content.promotionEnabled ? content.promotionImageUrl : null} />
+      {isMock && (
         <p className="bg-mist px-4 py-2 text-center text-xs text-stone">
           Mode demo: produk, harga, stok, pembayaran, dan pengiriman masih data contoh.
         </p>
-        )}
-      </StorefrontChrome>
+      )}
     </>
   );
 }

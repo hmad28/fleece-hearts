@@ -142,12 +142,21 @@ export function CheckoutForm() {
     enabled: hydrated && lines.length > 0 && !invalidCart && distanceKm != null,
   });
   const methodsQuery = useQuery({ queryKey: ["payment-methods"], queryFn: () => services.payment.listMethods() });
+  const preferenceQuery = useQuery({ queryKey: ["account-payment-preference"], queryFn: async () => {
+    const response = await fetch("/api/account/payment-preference");
+    return response.ok ? (await response.json() as { methodCode: string | null }).methodCode : null;
+  }, retry: false });
   const rates = ratesQuery.data ?? [];
   const methods = methodsQuery.data ?? [];
   const selectedRate = rates.find((rate) => `${rate.courierCode}:${rate.service}` === shippingCode && rate.available !== false);
   const selectedMethod = methods.find((method) => method.code === paymentCode);
   const codBlocked = distanceKm == null || distanceKm > COD_MAX_KM;
   const total = subtotal + (selectedRate?.price ?? 0) + (selectedMethod?.fee ?? 0);
+
+  useEffect(() => {
+    const preferred = methods.find((method) => method.code === preferenceQuery.data);
+    if (!paymentCode && preferred && !(preferred.type === "COD" && codBlocked)) setPaymentCode(preferred.code);
+  }, [methods, preferenceQuery.data, paymentCode, codBlocked]);
 
   // Reset pilihan yang jadi tidak valid saat alamat berubah.
   useEffect(() => {

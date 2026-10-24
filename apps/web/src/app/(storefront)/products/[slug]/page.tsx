@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import { ProductGallery } from "@/components/product/product-gallery";
 import { ProductGrid } from "@/components/product/product-grid";
 import { ProductPurchase } from "@/components/product/product-purchase";
+import { WishlistButton } from "@/components/account/wishlist-button";
 import { formatReleaseShortWIB, formatReleaseWIB } from "@/lib/datetime";
 import { getDropContext } from "@/lib/drop-context";
 import { dbCatalog } from "@/lib/storefront-data";
@@ -108,6 +109,7 @@ export default async function ProductPage({ params }: { params: Params }) {
               lockedLabel={lockedDrop ? `Rilis ${formatReleaseShortWIB(lockedDrop.releaseAt)}` : undefined}
             />
           </div>
+          <div className="mt-4"><WishlistButton productId={product.id} productName={product.name} variant="text" /></div>
 
           <ul className="mt-8 grid grid-cols-2 gap-3 text-sm">
             <li className="rounded-xl bg-mist p-3"><span className="block font-medium">Dikirim dari {STORE_LOCATION.short}</span><span className="text-stone">Same Day ≤ 60 km</span></li>

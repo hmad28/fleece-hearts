@@ -3,6 +3,7 @@ import { formatRupiah } from "@fh/shared";
 import Link from "next/link";
 import { Media } from "@/components/ui/media";
 import { LiveStockTag, QuickAdd } from "./product-card-live";
+import { WishlistButton } from "@/components/account/wishlist-button";
 
 export interface Swatch {
   slug: string;
@@ -46,6 +47,7 @@ export function ProductCard({ product, upcomingDropCode, swatches = [], priority
           <LiveStockTag product={product} upcomingDropCode={upcomingDropCode} />
           {discount > 0 && <span className="rounded-full bg-ink px-2.5 py-1 text-xs leading-none text-paper">−{discount}%</span>}
         </div>
+        <div className="absolute right-3 top-3 z-10"><WishlistButton productId={product.id} productName={product.name} /></div>
         {!upcomingDropCode && <QuickAdd product={product} />}
       </div>
 
