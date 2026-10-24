@@ -119,6 +119,34 @@
   filter: grayscale(0.85) sepia(0.18) contrast(0.95) brightness(1.04);
 }
 
+/* Compact dashboard treatment for the shadcn primitives. */
+.fh-dashboard [data-slot="card"] {
+  border-radius: 0;
+  box-shadow: none;
+  gap: 0;
+  border-color: #e6e1d9;
+}
+
+.fh-dashboard [data-slot="card-header"] {
+  border-bottom: 1px solid #e6e1d9;
+}
+
+.fh-dashboard [data-slot="card-description"] {
+  display: none;
+}
+
+.fh-dashboard [data-slot="tabs-list"],
+.fh-dashboard [data-slot="tabs-trigger"] {
+  border-radius: 3px;
+}
+
+.fh-dashboard button,
+.fh-dashboard input,
+.fh-dashboard textarea,
+.fh-dashboard select {
+  border-radius: 4px;
+}
+
 @keyframes fh-fade {
   from { opacity: 0; }
   to { opacity: 1; }

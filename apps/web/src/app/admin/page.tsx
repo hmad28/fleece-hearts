@@ -1,57 +1,36 @@
 import Link from "next/link";
-import { ArrowUpRight, Boxes, MessageCircle, Package, ShoppingBag, TrendingUp } from "lucide-react";
+import { ArrowUpRight, Boxes, MessageCircle, Package, ShoppingBag } from "lucide-react";
 import { getDb } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/admin";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { PageHeading } from "@/components/admin/page-heading";
 import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export default async function AdminPage() {
-  const admin = await requireAdmin();
+  await requireAdmin();
   const db = getDb();
-  const [products, orders, conversations, movements, recentOrders] = await Promise.all([
+  const [products, orders, conversations, recentOrders] = await Promise.all([
     db.query<{ count: string; low_stock: string }>(`SELECT count(*)::text AS count, count(*) FILTER (WHERE EXISTS (SELECT 1 FROM jsonb_array_elements(data->'variants') v WHERE (v->>'available')::int < 5))::text AS low_stock FROM catalog_products`),
     db.query<{ count: string }>("SELECT count(*)::text AS count FROM demo_orders"),
     db.query<{ count: string }>("SELECT count(*)::text AS count FROM chat_conversations"),
-    db.query<{ count: string }>("SELECT count(*)::text AS count FROM inventory_movements"),
-    db.query<{ data: { id: string; orderNumber: string; customer: { name: string }; status: string; total: number; createdAt: string } }>("SELECT data FROM demo_orders ORDER BY created_at DESC LIMIT 5"),
+    db.query<{ data: { id: string; orderNumber: string; customer: { name: string }; status: string; total: number; createdAt: string } }>("SELECT data FROM demo_orders ORDER BY created_at DESC LIMIT 8"),
   ]);
-  const stats = [
-    { label: "Produk aktif", value: products.rows[0]?.count ?? "0", detail: "Dalam katalog", href: "/admin/products", icon: Package },
-    { label: "Perlu cek stok", value: products.rows[0]?.low_stock ?? "0", detail: "Varian di bawah 5 pcs", href: "/admin/products", icon: Boxes },
-    { label: "Total pesanan", value: orders.rows[0]?.count ?? "0", detail: "Pesanan simulasi", href: "/admin/orders", icon: ShoppingBag },
-    { label: "Percakapan", value: conversations.rows[0]?.count ?? "0", detail: "Masuk ke inbox", href: "/admin/chat", icon: MessageCircle },
+  const metrics = [
+    { label: "Produk", value: products.rows[0]?.count ?? "0", href: "/admin/products", icon: Package },
+    { label: "Stok rendah", value: products.rows[0]?.low_stock ?? "0", href: "/admin/products", icon: Boxes },
+    { label: "Pesanan", value: orders.rows[0]?.count ?? "0", href: "/admin/orders", icon: ShoppingBag },
+    { label: "Chat", value: conversations.rows[0]?.count ?? "0", href: "/admin/chat", icon: MessageCircle },
   ];
-  const shortcuts = [
-    { title: "Kelola katalog", description: "Produk, varian, dan stok", href: "/admin/products", icon: Package },
-    { title: "Ubah konten", description: "Beranda dan promosi", href: "/admin/content", icon: TrendingUp },
-    { title: "Lihat inbox", description: "Balas pertanyaan pelanggan", href: "/admin/chat", icon: MessageCircle },
+  const actions = [
+    { label: "Produk & stok", href: "/admin/products" },
+    { label: "Pesanan", href: "/admin/orders" },
+    { label: "CMS", href: "/admin/content" },
+    { label: "Chat pelanggan", href: "/admin/chat" },
   ];
-  return <div>
-    <PageHeading eyebrow="Studio / Overview" title="Selamat datang kembali" description={`Halo, ${admin.email}. Berikut kondisi toko dan pekerjaan yang bisa langsung kamu lanjutkan.`} />
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      {stats.map((stat) => <Link key={stat.label} href={stat.href} className="group">
-        <Card className="h-full gap-5 border-line bg-white py-5 shadow-none transition-all hover:-translate-y-0.5 hover:border-brand/30 hover:shadow-md">
-          <CardHeader className="flex flex-row items-center justify-between px-5"><CardDescription className="font-medium">{stat.label}</CardDescription><span className="rounded-lg bg-brand/8 p-2 text-brand"><stat.icon className="size-4" /></span></CardHeader>
-          <CardContent className="px-5"><strong className="text-4xl font-semibold tracking-tight tabular-nums">{stat.value}</strong><p className="mt-1.5 text-xs text-stone">{stat.detail}</p></CardContent>
-        </Card>
-      </Link>)}
-    </div>
-    <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(18rem,0.8fr)]">
-      <Card className="gap-0 border-line bg-white py-0 shadow-none">
-        <CardHeader className="flex flex-row items-center justify-between border-b border-line py-5"><div><CardTitle className="text-base">Pesanan terbaru</CardTitle><CardDescription className="mt-1">Aktivitas pembelian paling baru</CardDescription></div><Link href="/admin/orders" className="inline-flex items-center gap-1 text-xs font-semibold text-brand">Semua pesanan <ArrowUpRight className="size-3.5" /></Link></CardHeader>
-        <CardContent className="px-0">
-          {recentOrders.rows.length ? recentOrders.rows.map(({ data: order }) => <Link href="/admin/orders" key={order.id} className="flex flex-wrap items-center gap-3 border-b border-line px-6 py-4 last:border-b-0 hover:bg-muted/60 sm:flex-nowrap">
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-mist text-brand"><ShoppingBag className="size-4" /></span>
-            <span className="min-w-0 flex-1"><strong className="block truncate text-sm">{order.orderNumber}</strong><small className="block truncate text-stone">{order.customer.name}</small></span>
-            <Badge tone="muted">{order.status}</Badge><strong className="min-w-28 text-right text-sm tabular-nums">Rp{order.total.toLocaleString("id-ID")}</strong>
-          </Link>) : <div className="p-10 text-center"><ShoppingBag className="mx-auto size-8 text-stone/50" /><p className="mt-3 text-sm font-medium">Belum ada pesanan</p><p className="mt-1 text-xs text-stone">Pesanan baru akan tampil di sini.</p></div>}
-        </CardContent>
-      </Card>
-      <div className="space-y-6">
-        <Card className="gap-4 border-line bg-white shadow-none"><CardHeader><CardTitle className="text-base">Akses cepat</CardTitle><CardDescription>Lanjutkan pekerjaan utama</CardDescription></CardHeader><CardContent className="space-y-1">{shortcuts.map((item) => <Link key={item.href} href={item.href} className="flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-muted"><span className="rounded-lg bg-brand/8 p-2 text-brand"><item.icon className="size-4" /></span><span className="flex-1"><strong className="block text-sm">{item.title}</strong><small className="text-stone">{item.description}</small></span><ArrowUpRight className="size-4 text-stone" /></Link>)}</CardContent></Card>
-        <Card className="gap-2 border-brand/15 bg-brand/5 shadow-none"><CardHeader><CardTitle className="text-base">Catatan operasional</CardTitle></CardHeader><CardContent className="text-sm leading-6 text-stone"><strong className="text-ink">{movements.rows[0]?.count ?? "0"} mutasi stok</strong> sudah tercatat. Pembayaran dan pengiriman di situs saat ini berjalan dalam mode simulasi.</CardContent></Card>
-      </div>
+  return <div className="space-y-6">
+    <div className="grid grid-cols-2 overflow-hidden border border-[#e6e1d9] bg-white lg:grid-cols-4">{metrics.map((metric, index) => <Link key={metric.label} href={metric.href} className={`group flex min-h-32 flex-col justify-between p-5 transition-colors hover:bg-[#faf7f3] sm:p-6 ${index % 2 === 0 ? "border-r border-[#e6e1d9]" : ""} ${index < 2 ? "border-b border-[#e6e1d9] lg:border-b-0" : ""} ${index === 1 ? "lg:border-r" : ""}`}><div className="flex items-center justify-between"><span className="text-xs font-medium text-stone">{metric.label}</span><metric.icon className="size-4 text-brand" strokeWidth={1.8} /></div><strong className="text-[2.4rem] font-semibold leading-none tracking-[-0.06em] tabular-nums">{metric.value}</strong></Link>)}</div>
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.65fr)_minmax(15rem,0.7fr)]">
+      <section className="min-w-0 border border-[#e6e1d9] bg-white"><div className="flex h-14 items-center justify-between border-b border-[#e6e1d9] px-5"><h2 className="text-sm font-semibold">Pesanan terbaru</h2><Link href="/admin/orders" className="text-xs font-medium text-brand hover:underline">Lihat semua</Link></div><div className="overflow-x-auto"><Table><TableHeader><TableRow className="bg-[#faf9f6]"><TableHead className="pl-5">Pesanan</TableHead><TableHead>Pelanggan</TableHead><TableHead>Status</TableHead><TableHead className="pr-5 text-right">Total</TableHead></TableRow></TableHeader><TableBody>{recentOrders.rows.map(({ data: order }) => <TableRow key={order.id}><TableCell className="pl-5 font-medium">{order.orderNumber}</TableCell><TableCell className="text-stone">{order.customer.name}</TableCell><TableCell><Badge tone="muted">{order.status}</Badge></TableCell><TableCell className="pr-5 text-right font-medium tabular-nums">Rp{order.total.toLocaleString("id-ID")}</TableCell></TableRow>)}</TableBody></Table>{!recentOrders.rows.length && <div className="px-5 py-14 text-center text-sm text-stone">Belum ada pesanan.</div>}</div></section>
+      <section className="h-fit border border-[#e6e1d9] bg-white"><h2 className="flex h-14 items-center border-b border-[#e6e1d9] px-5 text-sm font-semibold">Akses cepat</h2><div>{actions.map((action) => <Link key={action.href} href={action.href} className="flex h-14 items-center justify-between border-b border-[#eee9e2] px-5 text-sm transition-colors last:border-0 hover:bg-[#faf7f3] hover:text-brand">{action.label}<ArrowUpRight className="size-4" strokeWidth={1.7} /></Link>)}</div></section>
     </div>
   </div>;
 }

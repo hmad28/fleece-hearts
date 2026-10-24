@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { auth } from "@/lib/auth/server";
 import { getAdminUser } from "@/lib/auth/admin";
 import { AdminNav } from "@/components/admin/admin-nav";
+import { AdminHeaderTitle } from "@/components/admin/admin-header-title";
 import { AdminSignOut } from "@/components/admin/admin-sign-out";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -15,43 +16,26 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   const { data } = await auth.getSession();
   if (!data?.user) redirect("/auth");
   const admin = await getAdminUser();
-  if (!admin) return <main className="flex min-h-dvh items-center justify-center bg-paper px-6">
-    <div className="w-full max-w-md rounded-2xl border border-line bg-white p-8 shadow-sm">
-      <span className="text-xs font-bold uppercase tracking-[0.16em] text-brand">Fleece Hearts / Studio</span>
-      <h1 className="mt-5 text-3xl font-semibold tracking-tight">Akses belum tersedia</h1>
-      <p className="mt-3 text-sm leading-6 text-stone">Akun ini belum terdaftar sebagai staf atau emailnya belum terverifikasi.</p>
-      <Link href="/account" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-brand">Kembali ke akun <ArrowUpRight className="size-4" /></Link>
-    </div>
-  </main>;
+  if (!admin) return <main className="flex min-h-dvh items-center justify-center bg-[#f6f4f0] px-6"><div className="w-full max-w-md border border-line bg-white p-8"><h1 className="text-2xl font-semibold">Akses belum tersedia</h1><p className="mt-3 text-sm text-stone">Akun ini belum terdaftar sebagai staf atau emailnya belum terverifikasi.</p><Link href="/account" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-brand">Kembali ke akun <ArrowUpRight className="size-4" /></Link></div></main>;
 
-  return <div className="min-h-dvh bg-[#f8f7f4] text-ink">
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-line bg-white lg:flex">
-      <Link href="/admin" className="flex h-20 items-center gap-3 border-b border-line px-6">
-        <span className="flex size-10 items-center justify-center rounded-xl bg-brand font-display text-xl text-white">FH</span>
-        <span><strong className="block text-sm font-bold tracking-tight">Fleece Hearts</strong><small className="block text-[10px] font-semibold uppercase tracking-[0.15em] text-stone">Studio / Admin</small></span>
+  return <div className="fh-dashboard min-h-dvh bg-[#f6f4f0] font-sans text-[#24201e]">
+    <aside className="fixed inset-y-0 left-0 z-30 hidden w-[244px] flex-col bg-[#211d1d] lg:flex">
+      <Link href="/admin" className="flex h-[72px] items-center gap-3 border-b border-white/10 px-6">
+        <span className="flex size-8 items-center justify-center bg-brand font-display text-lg text-white">FH</span>
+        <strong className="text-[15px] font-semibold tracking-tight text-white">Fleece Hearts</strong>
       </Link>
-      <div className="flex-1 overflow-y-auto px-4 py-7"><AdminNav role={admin.adminRole} /></div>
-      <div className="border-t border-line p-4"><Link href="/" className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-stone hover:bg-mist hover:text-ink">Lihat toko <ArrowUpRight className="size-4" /></Link></div>
+      <div className="flex-1 overflow-y-auto px-3 py-7"><AdminNav role={admin.adminRole} /></div>
+      <div className="border-t border-white/10 px-3 py-4"><Link href="/" className="flex h-11 items-center justify-between rounded-md px-4 text-[13px] text-white/60 transition-colors hover:bg-white/[0.06] hover:text-white">Lihat toko <ArrowUpRight className="size-4" /></Link></div>
     </aside>
-    <div className="min-w-0 lg:pl-64">
-      <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-line bg-white/95 px-4 backdrop-blur sm:px-7 lg:h-20 lg:px-10">
-        <div className="flex items-center gap-3">
-          <Sheet>
-            <SheetTrigger asChild><Button type="button" variant="ghost" size="icon" className="rounded-lg lg:hidden" aria-label="Buka navigasi"><Menu className="size-5" /></Button></SheetTrigger>
-            <SheetContent side="left" className="w-72 bg-white p-0">
-              <SheetHeader className="border-b border-line p-6 text-left"><SheetTitle>Fleece Hearts</SheetTitle><SheetDescription>Studio / Admin</SheetDescription></SheetHeader>
-              <div className="px-4 py-6"><AdminNav mobile role={admin.adminRole} /></div>
-            </SheetContent>
-          </Sheet>
-          <span className="text-xs font-semibold uppercase tracking-[0.16em] text-stone">Management workspace</span>
+    <div className="min-w-0 lg:pl-[244px]">
+      <header className="sticky top-0 z-20 flex h-[72px] items-center justify-between border-b border-[#e6e1d9] bg-[#fdfcf9]/95 px-4 backdrop-blur sm:px-7 lg:px-9">
+        <div className="flex min-w-0 items-center gap-3">
+          <Sheet><SheetTrigger asChild><Button type="button" variant="ghost" size="icon" className="rounded-md lg:hidden" aria-label="Buka navigasi"><Menu className="size-5" /></Button></SheetTrigger><SheetContent side="left" className="w-[270px] border-0 bg-[#211d1d] p-0 text-white"><SheetHeader className="border-b border-white/10 px-6 py-6 text-left"><SheetTitle className="text-white">Fleece Hearts</SheetTitle><SheetDescription className="text-white/50">Admin</SheetDescription></SheetHeader><div className="px-3 py-6"><AdminNav mobile role={admin.adminRole} /></div></SheetContent></Sheet>
+          <AdminHeaderTitle />
         </div>
-        <div className="flex items-center gap-3 sm:gap-5">
-          <div className="hidden text-right sm:block"><strong className="block truncate text-xs font-semibold">{admin.email}</strong><span className="text-[10px] uppercase tracking-wider text-stone">{admin.adminRole}</span></div>
-          <span className="flex size-9 items-center justify-center rounded-full bg-brand/10 text-xs font-bold text-brand" aria-hidden>{admin.email.slice(0, 2).toUpperCase()}</span>
-          <AdminSignOut />
-        </div>
+        <div className="flex items-center gap-4"><span className="hidden max-w-48 truncate text-xs font-medium text-stone sm:block">{admin.email}</span><span className="flex size-8 items-center justify-center rounded-md bg-[#eee4df] text-[10px] font-bold text-brand" aria-hidden>{admin.email.slice(0, 2).toUpperCase()}</span><AdminSignOut /></div>
       </header>
-      <main id="konten" className="mx-auto w-full max-w-[1500px] px-4 pb-20 pt-7 sm:px-7 lg:px-10 lg:pt-10">{children}</main>
+      <main id="konten" className="mx-auto w-full max-w-[1500px] px-4 pb-16 pt-6 sm:px-7 lg:px-9 lg:pt-8">{children}</main>
     </div>
   </div>;
 }
