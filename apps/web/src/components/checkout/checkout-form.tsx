@@ -72,7 +72,7 @@ export function CheckoutForm() {
           ...current,
           name: data.customer.name ?? current.name,
           email: data.customer.email ?? current.email,
-          phone: data.address?.phone ?? current.phone,
+          phone: data.customer.phone || data.address?.phone || current.phone,
           ...(data.address ? {
             recipientName: data.address.recipientName,
             recipientPhone: data.address.phone,

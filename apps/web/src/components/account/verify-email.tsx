@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { authClient } from "@/lib/auth/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export function VerifyEmail({ email }: { email: string }) {
   const router = useRouter();
@@ -32,11 +34,12 @@ export function VerifyEmail({ email }: { email: string }) {
     finally { setBusy(false); }
   }
 
-  return <section className="mx-auto mt-10 max-w-2xl rounded-2xl border border-line bg-mist p-5">
-    <h2 className="font-display text-2xl">Verifikasi email</h2>
-    <p className="mt-2 text-sm">Verifikasi {email} untuk mengaktifkan akses staf dan menjaga akun Anda.</p>
-    <button type="button" onClick={() => void send()} disabled={busy} className="mt-4 rounded-full bg-ink px-5 py-2 text-sm text-paper disabled:opacity-50">Kirim kode ke email</button>
-    {sent && <form onSubmit={verify} className="mt-4 flex flex-wrap gap-2"><label className="sr-only" htmlFor="email-otp">Kode verifikasi</label><input id="email-otp" value={otp} onChange={(event) => setOtp(event.target.value)} inputMode="numeric" autoComplete="one-time-code" placeholder="Kode verifikasi" required className="rounded-lg border border-line bg-paper px-3 py-2" /><button disabled={busy} className="rounded-full bg-ink px-5 py-2 text-sm text-paper disabled:opacity-50">Verifikasi</button></form>}
-    {message && <p role="status" className="mt-3 text-sm">{message}</p>}
+  return <section className="rounded-[22px] border border-brand/20 bg-[#fbf3f3] p-5 sm:p-6">
+    <div className="flex flex-wrap items-center justify-between gap-4">
+      <div><h2 className="text-[1.05rem] font-semibold text-[#24201e]">Verifikasi email</h2><p className="mt-1 text-sm text-stone">Kirim kode ke {email} untuk mengamankan akun dan menerima pembaruan pesanan.</p></div>
+      <Button type="button" variant="brand" onClick={() => void send()} disabled={busy}>{busy ? "Mengirim..." : sent ? "Kirim ulang kode" : "Kirim kode"}</Button>
+    </div>
+    {sent && <form onSubmit={verify} className="mt-5 flex flex-wrap items-end gap-3"><label htmlFor="email-otp" className="min-w-44 flex-1 text-sm font-medium">Kode verifikasi<Input id="email-otp" value={otp} onChange={(event) => setOtp(event.target.value)} inputMode="numeric" autoComplete="one-time-code" placeholder="Masukkan kode email" required className="mt-2 bg-white" /></label><Button type="submit" variant="outline" disabled={busy}>Verifikasi</Button></form>}
+    {message && <p role="status" className="mt-3 text-sm text-brand">{message}</p>}
   </section>;
 }
